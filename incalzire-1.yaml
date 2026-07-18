@@ -1,0 +1,60 @@
+esphome:
+  name: incalzire-1
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "b108ebea21a5671e665c0bcf35350437"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou  
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3
+      password: !secret wifi_password_nou
+
+ 
+binary_sensor:
+  - platform: gpio
+    id: buton_pompa_1_on
+    pin:
+      number: 4
+      mode:
+        input: true
+        pullup: true
+    name: "Buton Pompa 1 on"
+  - platform: gpio
+    id: buton_pompa_1_off
+    pin:
+      number: 5
+      mode:
+        input: true
+        pullup: true
+    name: "Buton Pompa 1 off"
+switch:
+  - platform: gpio
+    pin: 12
+    name: "Pompa 1 on"
+    inverted: true
+    id: Pompa_1_on
+    
+
+  - platform: gpio
+    pin: 13
+    name: "Pompa 1 off"
+    inverted: true
+    id: Pompa_1_off    

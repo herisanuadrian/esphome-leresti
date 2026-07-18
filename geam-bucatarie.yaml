@@ -1,0 +1,118 @@
+esphome:
+  name: geam-bucatarie
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "b108ebea21a5671e665c0bcf35350437"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3
+      password: !secret wifi_password_nou
+  min_auth_mode: WPA2
+  ap:
+    ssid: "Geam-Bucatarie AP"
+    password: !secret wifi_password_nou
+
+captive_portal:
+
+# ─── LIMITATOARE / BUTOANE DE COMANDA ────────────────────────────────────────
+# Cablare: limitator NO/NC trimite "+" (3.3V) catre pin
+#          rezistenta pull-down 10k intre pin si GND
+#
+# D5 (GPIO14) = NO -> comanda RETRAGERE (motor_in2)
+#   La repaus: NO deschis, fara "+", pin tras la GND prin rezistenta -> LOW
+#   Activ: NO inchis, "+" ajunge la pin -> HIGH
+#   -> inverted: false => ON cand e activ
+#
+# D1 (GPIO5) = NC -> comanda INCHIDERE / EXTINDERE (motor_in1)
+#   La repaus: NC inchis, "+" ajunge la pin -> HIGH
+#   Activ: NC se deschide, "+" intrerupt, pin tras la GND -> LOW
+#   -> inverted: true => ON cand e activ
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D5            # GPIO14
+      mode: INPUT           # fara pullup intern - foloseste rezistenta externa
+      inverted: True
+    name: "Limitator Retragere"
+    id: limit_retragere
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms
+    on_press:
+      then:
+        - switch.turn_off: motor_in1
+        - switch.turn_on: motor_in2
+    on_release:
+      then:
+        - switch.turn_off: motor_in2
+
+  - platform: gpio
+    pin:
+      number: D1            # GPIO5
+      mode: INPUT           # fara pullup intern - foloseste rezistenta externa
+      inverted: true
+    name: "Limitator Inchidere"
+    id: limit_inchidere
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms
+    on_press:
+      then:
+        - switch.turn_off: motor_in2
+        - switch.turn_on: motor_in1
+    on_release:
+      then:
+        - switch.turn_off: motor_in1
+
+  - platform: status
+    name: "Geam Bucatarie Status"
+
+# ─── TA6586 H-BRIDGE ─────────────────────────────────────────────────────────
+# D6 (GPIO12) -> IN1 -> HIGH = EXTINDE / INCHIDERE
+# D7 (GPIO13) -> IN2 -> HIGH = RETRAGE
+switch:
+  - platform: gpio
+    pin: D6                  # GPIO12 -> TA6586 IN1
+    name: "Motor Inchidere/Extindere"
+    id: motor_in1
+    restore_mode: ALWAYS_OFF
+    interlock: [motor_in2]
+    interlock_wait_time: 100ms
+    internal: true
+
+  - platform: gpio
+    pin: D7                  # GPIO13 -> TA6586 IN2
+    name: "Motor Retragere"
+    id: motor_in2
+    restore_mode: ALWAYS_OFF
+    interlock: [motor_in1]
+    interlock_wait_time: 100ms
+    internal: true
+
+# ─── DIAGNOSTICE ─────────────────────────────────────────────────────────────
+sensor:
+  - platform: wifi_signal
+    name: "Geam Bucatarie WiFi"
+    update_interval: 60s
+    entity_category: diagnostic
+
+  - platform: uptime
+    name: "Geam Bucatarie Uptime"
+    entity_category: diagnostic

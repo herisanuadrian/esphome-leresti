@@ -1,0 +1,58 @@
+esphome:
+  name: ats-panou
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou  
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3  
+      password: !secret wifi_password_nou
+  ap:
+    ssid: "ATS-Panou Fallback"
+    password: "fallback1234"
+
+captive_portal:
+
+switch:
+  - platform: gpio
+    id: ats_panou
+    pin: 13
+    inverted: False
+    name: "ATS panou"
+    on_turn_off:
+      - homeassistant.service:
+          service: notify.mobile_app_sm_a356b
+          data:
+            title: "ATS Panou ALARMA"
+            message: "ATS Panou a trecut in OFF!"
+
+binary_sensor:
+  - platform: gpio
+    id: "id_acces_1"
+    pin:
+      number: 5
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    filters:
+      - delayed_on: 500ms
+      - delayed_off: 500ms 
+    name: "Use 1 Acces"

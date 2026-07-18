@@ -1,0 +1,98 @@
+esphome:
+  name: candel-p
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"
+
+wifi:
+  min_auth_mode: WPA2
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_2
+      password: !secret wifi_password_nou
+
+time:
+  - platform: homeassistant
+    id: ora_curenta
+    on_time:
+      - seconds: 0
+        minutes: 0
+        hours: 15
+        then:
+          - homeassistant.service:
+              service: switch.turn_off
+              data:
+                entity_id: switch.centrala_lemne_releu_static
+
+number:
+  - platform: template
+    name: "Prag Luminozitate P"
+    id: prag_luminozitate_p
+    min_value: 3000
+    max_value: 8000
+    step: 100
+    initial_value: 4000
+    optimistic: true
+    restore_value: true
+    unit_of_measurement: "lx"
+    icon: "mdi:brightness-6"
+
+switch:
+  - platform: template
+    name: "Automatizare Luminozitate P"
+    id: auto_luminozitate_p
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+
+sensor:
+  - platform: homeassistant
+    id: luminozitate_p
+    entity_id: sensor.statie_meteo_luminozitate
+    on_value:
+      then:
+        - if:
+            condition:
+              lambda: |-
+                if (!id(auto_luminozitate_p).state) return false;
+                auto t = id(ora_curenta).now();
+                if (!t.is_valid()) return false;
+                int minute_curent = t.hour * 60 + t.minute;
+                int minut_start = 9 * 60 + 30;
+                int minut_stop = 15 * 60;
+                return minute_curent >= minut_start && minute_curent < minut_stop;
+            then:
+              - if:
+                  condition:
+                    lambda: 'return x >= id(prag_luminozitate_p).state;'
+                  then:
+                    - delay: 10s
+                    - if:
+                        condition:
+                          lambda: 'return id(luminozitate_p).state >= id(prag_luminozitate_p).state;'
+                        then:
+                          - homeassistant.service:
+                              service: switch.turn_on
+                              data:
+                                entity_id: switch.centrala_lemne_releu_static
+                  else:
+                    - homeassistant.service:
+                        service: switch.turn_off
+                        data:
+                          entity_id: switch.centrala_lemne_releu_static

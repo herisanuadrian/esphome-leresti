@@ -1,0 +1,105 @@
+esphome:
+  name: temperatura
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "b108ebea21a5671e665c0bcf35350437"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3
+      password: !secret wifi_password_nou
+
+captive_portal:
+
+# 1. Configurare magistrală I2C pentru ecranul OLED
+i2c:
+  sda: D2
+  scl: D1
+
+# 2. Descărcarea unui font simplu din Google Fonts pentru text
+font:
+  - file: "gfonts://Roboto"
+    id: font_roboto
+    size: 16
+
+# 3. Configurare magistrală OneWire pe pinul D5
+one_wire:
+  - platform: gpio
+    pin: D5
+
+# 4. Senzorul de temperatură DS18B20
+sensor:
+  - platform: dallas_temp
+    address: 0x1800000024f47328
+    name: "Temperatura Actuala"
+    id: temperatura_actuala
+    update_interval: 10s
+
+# 5. Modulul Releu pe pinul D6
+switch:
+  - platform: gpio
+    pin: D6
+    name: "Releu Termostat"
+    id: releu_termostat
+
+# 6. CORECTAT: Termostatul virtual cu parametrii acceptați de bang_bang
+climate:
+  - platform: bang_bang
+    name: "Termostat Camera"
+    id: termostat_camera
+    sensor: temperatura_actuala
+
+    # Setează valorile inițiale de pornire/oprire (Exemplu: menține între 21.5°C și 22.5°C)
+    default_target_temperature_low: 21.5
+    default_target_temperature_high: 22.5
+
+    visual:
+      min_temperature: 18.0
+      max_temperature: 35.0
+      temperature_step: 0.5
+
+    # Releul pornește când scade sub limita inferioară și se oprește când depășește limita superioară
+    heat_action:
+      - switch.turn_on: releu_termostat
+    idle_action:
+      - switch.turn_off: releu_termostat
+
+# 7. Configurare interfață ecran OLED SSD1306
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    lambda: |-
+      // Linia 1: Afișare Temperatură Actuală
+      if (id(temperatura_actuala).has_state()) {
+        it.printf(0, 0, id(font_roboto), "Actuala: %.1f C", id(temperatura_actuala).state);
+      } else {
+        it.print(0, 0, id(font_roboto), "Actuala: --.- C");
+      }
+
+      // Linia 2: Afișare Temperatură Țintă (Media dintre pragul de sus și cel de jos)
+      float t_tinta = (id(termostat_camera).target_temperature_low + id(termostat_camera).target_temperature_high) / 2.0;
+      it.printf(0, 22, id(font_roboto), "Tinta: %.1f C", t_tinta);
+
+      // Linia 3: Afișare Stare Releu (Pornit/Oprit)
+      if (id(releu_termostat).state) {
+        it.print(0, 44, id(font_roboto), "Stare: PORNIT");
+      } else {
+        it.print(0, 44, id(font_roboto), "Stare: OPRIT");
+      }

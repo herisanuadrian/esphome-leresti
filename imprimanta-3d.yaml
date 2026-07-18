@@ -1,0 +1,58 @@
+esphome:
+  name: imprimanta-3d
+  
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"
+
+wifi:
+  ssid: !secret wifi_ssid_nou
+  password: !secret wifi_password_nou
+
+i2c:
+  sda: D2
+  scl: D1
+  scan: true
+  id: bus_a
+  frequency: 100kHz
+
+sensor:
+  - platform: bmp280
+    temperature:
+      name: "T-BME280-Enclosure"
+      oversampling: 16x
+    pressure:
+      name: "P-BME280-Enclosure"
+    address: 0x76
+    update_interval: 30s
+
+light:
+  - platform: rgb
+    name: "Enclosure Lights"
+    red: output_red
+    green: output_green
+    blue: output_blue
+
+output:
+  - platform: esp8266_pwm
+    id: output_red
+    pin: D6
+  - platform: esp8266_pwm
+    id: output_green
+    pin: D7
+  - platform: esp8266_pwm
+    id: output_blue
+    pin: D5
+    
+    

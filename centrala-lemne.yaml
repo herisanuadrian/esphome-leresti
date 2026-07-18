@@ -1,0 +1,106 @@
+
+esphome:
+  name: "centrala-lemne"
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"
+
+wifi:
+  min_auth_mode: WPA2
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+  ap:
+    ssid: "Centrala-Lemne Fallback"
+    password: "fallback1234"
+
+captive_portal:
+
+one_wire:
+  - platform: gpio
+    pin: GPIO4
+
+sensor:
+  - platform: dallas_temp
+    address: 0xa90316b5bda9ff28
+    id: temperatura_boiler
+    name: "Temp. Boiler"
+    filters:
+      - filter_out: nan
+      - clamp:
+          min_value: -10
+          max_value: 120
+
+  - platform: dallas_temp
+    address: 0xab0516b4ecdaff28
+    id: temperatura_panou
+    name: "Temp. Panou Solar"
+
+  - platform: dallas_temp
+    address: 0x7d0316b5c00cff28
+    id: temperatura_acm_boiler
+    name: "Temp. ACM Boiler"
+
+  - platform: dallas_temp
+    address: 0x430516b4ea7fff28
+    id: temperatura_centrala_lemne
+    name: "Temp. Centrala Lemne"
+
+binary_sensor:
+  - platform: gpio
+    id: input_pompa_panou
+    pin:
+      number: GPIO12
+      mode:
+        input: true
+        pullup: false
+    name: "Functionare Pompa Panou"
+
+switch:
+  - platform: gpio
+    id: releu_acm
+    pin:
+      number: GPIO5
+      inverted: False
+    name: "Releu ACM"
+    restore_mode: ALWAYS_OFF
+
+
+  - platform: gpio
+    id: releu_static
+    pin:
+      number: GPIO15
+      inverted: false
+    name: "Releu Static"
+  
+
+interval:
+  - interval: 30s
+    then:
+      - lambda: |-
+          float temp = id(temperatura_boiler).state;
+          ESP_LOGD("ACM", "Temp Boiler=%.1f, Releu ACM=%d", temp, id(releu_acm).state);
+          if (isnan(temp) || temp > 120.0 || temp < -10.0) {
+            ESP_LOGD("ACM", "Temperatura invalida -> Releu OFF");
+            id(releu_acm).turn_off();
+            return;
+          }
+          if (temp >= 48.0) {
+            ESP_LOGD("ACM", "Temp >= 48 -> Releu ON");
+            id(releu_acm).turn_on();
+          } else if (temp <= 35.0) {
+            ESP_LOGD("ACM", "Temp <= 35 -> Releu OFF");
+            id(releu_acm).turn_off();
+          }

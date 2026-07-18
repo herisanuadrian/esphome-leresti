@@ -1,0 +1,67 @@
+esphome:
+  name: camera-2
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou  
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+
+
+output:
+  - platform: ledc
+    pin: GPIO4
+    id: camera_2_led
+
+light:
+  - platform: monochromatic
+    output: camera_2_led
+    name: "Esp32 Camera Lumina 2"
+
+esp32_camera:
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+
+  # Image settings
+  name: Camera 2
+
+esp32_camera_web_server:
+  - port: 8080
+    mode: stream
+  - port: 8081
+    mode: snapshot
+
+
+switch:
+  - platform: gpio
+    id: "proiector"
+    pin: GPIO13
+    inverted: false
+    name: Proiector

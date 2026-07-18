@@ -1,0 +1,73 @@
+esphome:
+  name: relee-apa-2-retea
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"
+
+wifi:
+  min_auth_mode: WPA2
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou  
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3  
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_2
+      password: !secret wifi_password_nou
+
+one_wire:
+  - platform: gpio
+    pin: 14
+
+sensor:
+  - platform: dallas_temp
+    address: 0xc60300a2796abe28
+    name: "Temperatura Robinet Apa"
+    update_interval: 180s
+    id: temperatura_robinet_apa
+  
+  - platform: pulse_counter
+    pin:
+      number: 5
+      mode: INPUT_PULLUP
+    unit_of_measurement: 'L'
+    accuracy_decimals: 0
+    internal_filter: 13us
+    filters:
+      - multiply: 0.0025
+    name: 'Contor apa retea L per min'
+    total:
+      unit_of_measurement: 'm³'
+      name: 'Contor apa retea m³'
+      state_class: total_increasing
+      device_class: water
+      accuracy_decimals: 3
+      filters:
+        - multiply: 0.0000025
+    update_interval: 20s
+
+switch:
+  - platform: gpio
+    pin: 12
+    name: "Releu 10 apa retea"
+    inverted: true
+    id: releu_10
+
+  - platform: gpio
+    pin: 13
+    name: "Releu 20 incalzire robinet"
+    inverted: true
+    id: releu_20
