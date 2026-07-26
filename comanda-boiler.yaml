@@ -71,6 +71,19 @@ globals:
     restore_value: false
     initial_value: 'false'
 
+switch:
+  - platform: template
+    id: comutator_general_boiler
+    name: "Comutator general boiler"
+    icon: "mdi:water-boiler"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    turn_off_action:
+      - lambda: |-
+          if (id(boiler_pornit_dorit)) {
+            id(opreste_boiler).execute();
+          }
+
 script:
   - id: porneste_boiler
     mode: single
@@ -119,6 +132,6 @@ interval:
           } else {
             id(contor_conditii_pornire) = 0;
           }
-          if (id(contor_conditii_pornire) >= 10 && !id(boiler_pornit_dorit)) {
+          if (id(contor_conditii_pornire) >= 10 && !id(boiler_pornit_dorit) && id(comutator_general_boiler).state) {
             id(porneste_boiler).execute();
           }
