@@ -1,6 +1,24 @@
 esphome:
   name: candel-p
 
+# --- Context sistem: boiler electric alimentat din solar ---
+# switch.centrala_lemne_releu_static controleaza incalzirea unui boiler electric.
+# Energia electrica provine dintr-un sistem fotovoltaic:
+#   - panouri solare orientate SUD, inclinare 32 grade, putere maxima 3.5kW
+#   - invertor 6.2kW
+#   - baterii: 4x 12V 80Ah, inseriate
+#
+# Obiectiv: functionarea boilerului trebuie conditionata de capacitatea
+# sistemului solar de a genera curent (nu doar de un interval orar fix).
+# Indicator disponibil: sensor.statie_meteo_luminozitate (soare puternic = surplus productie).
+#
+# Stare actuala (2026-07-26): pornire/oprire controlata prin HA intr-un
+# interval orar fix 9:00-15:00, bazat pe luminozitate + un time trigger de
+# oprire fortata la ora 15:00. Logica are un race condition cunoscut
+# (turn_on intarziat de 10s poate ridica releul dupa oprirea de la 15:00)
+# si urmeaza sa fie redesenata pentru a reflecta capacitatea reala a
+# sistemului solar/baterii, nu doar un interval orar.
+
 esp8266:
   board: d1_mini
 
