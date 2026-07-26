@@ -3,5 +3,5 @@
 # You can modify this file to suit your needs.
 /.esphome/
 /secrets.yaml
-/knowledge-base/_meta/esphome-src/*
+/knowledge-base/_meta/esphome-src/
 .DS_Store
