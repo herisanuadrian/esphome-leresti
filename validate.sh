@@ -3,7 +3,11 @@
 # ESPHome YAML Validator — Claude Code safe version
 # Usage: ./validate.sh <config-name>
 
-CONFIG_NAME=${1:-esp-tourbillon}
+CONFIG_NAME="$1"
+if [ -z "$CONFIG_NAME" ]; then
+    echo "Usage: ./validate.sh <config-name>"
+    exit 1
+fi
 CONFIG_FILE="${CONFIG_NAME}.yaml"
 if [ ! -f "$CONFIG_FILE" ]; then
     CONFIG_FILE="config/${CONFIG_NAME}.yaml"

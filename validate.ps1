@@ -2,7 +2,8 @@
 # Usage: .\validate.ps1 <config-name>
 
 param(
-    [string]$ConfigName = "esp-tourbillon"
+    [Parameter(Mandatory = $true)]
+    [string]$ConfigName
 )
 
 $ConfigFile = "$ConfigName.yaml"
