@@ -1,5 +1,5 @@
 substitutions:
-  device_version: "0.5"
+  device_version: "0.0"
 
 esphome:
   name: blank-esp32-s2-b
