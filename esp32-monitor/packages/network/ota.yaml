@@ -1,0 +1,6 @@
+# DEPENDS ON: (nothing)
+# EXPOSES: (nothing — platform configuration)
+
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"

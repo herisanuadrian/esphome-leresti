@@ -1,0 +1,25 @@
+# DEPENDS ON: p1_notif_text, p1_notif_box (ui/lvgl_page_clock.yaml), p2_notif_text, p2_notif_box (ui/lvgl_page_exterior.yaml), p3_notif_text, p3_notif_box (ui/lvgl_page_dormitor.yaml)
+# EXPOSES: script.show_notification — called by all 7 services in network/api.yaml
+
+# ─── Script notificare ────────────────────────────────────────────
+script:
+  - id: show_notification
+    parameters:
+      msg: string
+    then:
+      - lvgl.label.update:
+          id: p1_notif_text
+          text: !lambda 'return msg;'
+      - lvgl.label.update:
+          id: p2_notif_text
+          text: !lambda 'return msg;'
+      - lvgl.label.update:
+          id: p3_notif_text
+          text: !lambda 'return msg;'
+      - lvgl.widget.show: p1_notif_box
+      - lvgl.widget.show: p2_notif_box
+      - lvgl.widget.show: p3_notif_box
+      - delay: 5s
+      - lvgl.widget.hide: p1_notif_box
+      - lvgl.widget.hide: p2_notif_box
+      - lvgl.widget.hide: p3_notif_box

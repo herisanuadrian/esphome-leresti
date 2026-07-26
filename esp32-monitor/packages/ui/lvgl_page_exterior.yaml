@@ -1,0 +1,150 @@
+# DEPENDS ON: color.*, font.* (ui/display.yaml). NOTE: must be listed AFTER lvgl_page_clock and BEFORE lvgl_page_dormitor in esp32-monitor.yaml's packages: block — page order feeds the 6s auto-advance interval. See esp32-monitor/NOTES.md.
+# EXPOSES: lvgl page_exterior. Widget ids: p2_wifi, p2_temp, p2_lux, p2_notif_box, p2_notif_text — all written by automations/script.yaml and/or automations/interval.yaml
+
+lvgl:
+  pages:
+
+    # ════════════════════════════════════════════════════════════
+    # PAGINA 2: STATIE METEO EXTERIOR
+    # ════════════════════════════════════════════════════════════
+    - id: page_exterior
+      bg_color: col_bg
+      widgets:
+        - obj:
+            x: 0
+            y: 0
+            width: 480
+            height: 36
+            bg_color: col_header
+            border_width: 0
+            radius: 0
+            widgets:
+              - label:
+                  x: 12
+                  y: 10
+                  text: "Statie Meteo Exterior"
+                  text_color: col_accent
+                  text_font: font_medium
+              - label:
+                  id: p2_wifi
+                  x: 370
+                  y: 10
+                  text: "-- dBm"
+                  text_color: col_gray
+                  text_font: font_small
+
+        - obj:
+            x: 8
+            y: 44
+            width: 228
+            height: 220
+            bg_color: col_header
+            border_color: col_accent
+            border_width: 1
+            radius: 10
+            widgets:
+              - label:
+                  x: 10
+                  y: 5
+                  text: "TEMPERATURA"
+                  text_color: col_gray
+                  text_font: font_small
+              - label:
+                  id: p2_temp
+                  x: 10
+                  y: 80
+                  text: "--.-"
+                  text_color: col_accent
+                  text_font: font_clock_big
+              - label:
+                  x: 10
+                  y: 170
+                  text: "grade Celsius"
+                  text_color: col_gray
+                  text_font: font_small
+
+        - obj:
+            x: 244
+            y: 44
+            width: 228
+            height: 220
+            bg_color: col_header
+            border_color: col_orange
+            border_width: 1
+            radius: 10
+            widgets:
+              - label:
+                  x: 10
+                  y: 5
+                  text: "LUMINOZITATE"
+                  text_color: col_gray
+                  text_font: font_small
+              - label:
+                  id: p2_lux
+                  x: 10
+                  y: 80
+                  text: "----"
+                  text_color: col_orange
+                  text_font: font_clock_big
+              - label:
+                  x: 10
+                  y: 170
+                  text: "lux"
+                  text_color: col_gray
+                  text_font: font_small
+
+        # ── Notificare alarma ────────────────────────────────────
+        - obj:
+            id: p2_notif_box
+            x: 60
+            y: 130
+            width: 360
+            height: 60
+            bg_color: col_header
+            border_color: col_red
+            border_width: 2
+            radius: 10
+            hidden: true
+            widgets:
+              - label:
+                  id: p2_notif_text
+                  x: 10
+                  y: 15
+                  text: ""
+                  text_color: col_red
+                  text_font: font_medium
+
+        # ── Dots ────────────────────────────────────────────────
+        - obj:
+            x: 192
+            y: 310
+            width: 96
+            height: 6
+            bg_color: col_bg
+            border_width: 0
+            radius: 0
+            widgets:
+              - obj:
+                  x: 0
+                  y: 0
+                  width: 24
+                  height: 6
+                  bg_color: col_dot_inactive
+                  border_width: 0
+                  radius: 3
+              - obj:
+                  x: 36
+                  y: 0
+                  width: 24
+                  height: 6
+                  bg_color: col_dot_active
+                  border_width: 0
+                  radius: 3
+              - obj:
+                  x: 72
+                  y: 0
+                  width: 24
+                  height: 6
+                  bg_color: col_dot_inactive
+                  border_width: 0
+                  radius: 3

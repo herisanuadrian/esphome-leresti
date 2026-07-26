@@ -1,0 +1,11 @@
+# DEPENDS ON: ${pin_backlight}, ${pin_buzzer} (substitutions)
+# EXPOSES: (nothing — internal PWM outputs). backlight_pwm consumed by actuators/light.yaml; buzzer_out consumed by actuators/rtttl.yaml
+
+# ─── Output: Backlight + Buzzer ───────────────────────────────────
+output:
+  - platform: ledc
+    pin: ${pin_backlight}
+    id: backlight_pwm
+  - platform: ledc
+    pin: ${pin_buzzer}
+    id: buzzer_out

@@ -1,0 +1,58 @@
+# DEPENDS ON: ${pin_display_cs}, ${pin_display_dc}, ${pin_display_rst}, ${display_invert_colors} (substitutions), spi: bus (hardware/spi.yaml)
+# EXPOSES: display.my_display, color.{col_bg,col_header,col_accent,col_white,col_gray,col_green,col_yellow,col_orange,col_purple,col_red,col_dot_active,col_dot_inactive}, font.{font_small,font_medium,font_large,font_clock,font_clock_big}. Consumed by ui/lvgl_base.yaml and all ui/lvgl_page_*.yaml
+
+# ─── Culori ───────────────────────────────────────────────────────
+color:
+  - id: col_bg
+    hex: "0d1b2a"
+  - id: col_header
+    hex: "1b2838"
+  - id: col_accent
+    hex: "00b4d8"
+  - id: col_white
+    hex: "ffffff"
+  - id: col_gray
+    hex: "8d99ae"
+  - id: col_green
+    hex: "06d6a0"
+  - id: col_yellow
+    hex: "ffd166"
+  - id: col_orange
+    hex: "fb8500"
+  - id: col_purple
+    hex: "9b5de5"
+  - id: col_red
+    hex: "ef476f"
+  - id: col_dot_active
+    hex: "00b4d8"
+  - id: col_dot_inactive
+    hex: "3a4a5a"
+
+# ─── Fonturi ──────────────────────────────────────────────────────
+font:
+  - file: "gfonts://Roboto"
+    id: font_small
+    size: 12
+  - file: "gfonts://Roboto"
+    id: font_medium
+    size: 18
+  - file: "gfonts://Roboto"
+    id: font_large
+    size: 26
+  - file: "gfonts://Roboto"
+    id: font_clock
+    size: 48
+  - file: "gfonts://Roboto"
+    id: font_clock_big
+    size: 80
+
+# ─── Display ST7796 480x320 ───────────────────────────────────────
+display:
+  - platform: ili9xxx
+    model: ST7796
+    cs_pin: ${pin_display_cs}
+    dc_pin: ${pin_display_dc}
+    reset_pin: ${pin_display_rst}
+    id: my_display
+    auto_clear_enabled: false
+    invert_colors: ${display_invert_colors}

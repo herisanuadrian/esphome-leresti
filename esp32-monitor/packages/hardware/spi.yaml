@@ -1,0 +1,8 @@
+# DEPENDS ON: ${pin_spi_clk}, ${pin_spi_mosi}, ${pin_spi_miso} (substitutions)
+# EXPOSES: (nothing — bus configuration, consumed by ui/display.yaml)
+
+# ─── SPI ──────────────────────────────────────────────────────────
+spi:
+  clk_pin: ${pin_spi_clk}
+  mosi_pin: ${pin_spi_mosi}
+  miso_pin: ${pin_spi_miso}

@@ -1,0 +1,19 @@
+# DEPENDS ON: ${pin_touch_cs}, ${pin_touch_irq} (substitutions)
+# EXPOSES: touchscreen.my_touch (consumed by ui/lvgl_base.yaml)
+
+# ─── Touch XPT2046 ────────────────────────────────────────────────
+touchscreen:
+  - platform: xpt2046
+    id: my_touch
+    cs_pin: ${pin_touch_cs}
+    interrupt_pin: ${pin_touch_irq}
+    update_interval: 50ms
+    threshold: 400
+    calibration:
+      x_min: 200
+      x_max: 3800
+      y_min: 200
+      y_max: 3800
+    on_touch:
+      - lambda: |-
+          ESP_LOGI("touch", "Touch detectat: x=%d, y=%d", touch.x, touch.y);

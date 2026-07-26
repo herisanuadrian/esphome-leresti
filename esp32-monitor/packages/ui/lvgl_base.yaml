@@ -1,0 +1,18 @@
+# DEPENDS ON: display.my_display (ui/display.yaml), touchscreen.my_touch (hardware/touchscreen.yaml)
+# EXPOSES: (nothing new — lvgl top-level config; pages: list is contributed by ui/lvgl_page_clock.yaml, ui/lvgl_page_exterior.yaml, ui/lvgl_page_dormitor.yaml via list merge)
+
+# ─── LVGL UI ──────────────────────────────────────────────────────
+lvgl:
+  displays:
+    - my_display
+  touchscreens:
+    - my_touch
+  rotation: 90
+  buffer_size: 25%
+  theme:
+    obj:
+      scrollbar_mode: "OFF"
+      pad_all: 0
+    label:
+      pad_top: 5
+      pad_bottom: 5

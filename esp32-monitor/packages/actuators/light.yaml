@@ -1,0 +1,10 @@
+# DEPENDS ON: backlight_pwm (actuators/output.yaml)
+# EXPOSES: light.backlight. Consumed by automations/interval.yaml (60s backlight scheduler)
+
+# ─── Backlight ────────────────────────────────────────────────────
+light:
+  - platform: monochromatic
+    output: backlight_pwm
+    name: "Display Backlight"
+    id: backlight
+    restore_mode: RESTORE_DEFAULT_OFF

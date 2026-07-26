@@ -1,0 +1,52 @@
+# DEPENDS ON: sensor.statie_meteo_temperatura, sensor.statie_meteo_luminozitate, sensor.temp_dormitor_1, sensor.umid_dormitor_1 (HA entities)
+# EXPOSES: sensor.sensor_psram, sensor.sensor_heap, sensor.sensor_wifi (HA-facing). Internal-only mirrors (no name:, consumed by automations/interval.yaml): ha_statie_temp, ha_statie_lux, ha_dorm_temp, ha_dorm_umid
+
+# ─── Senzori ──────────────────────────────────────────────────────
+sensor:
+  - platform: template
+    name: "PSRAM Size"
+    id: sensor_psram
+    unit_of_measurement: "KB"
+    update_interval: 60s
+    entity_category: diagnostic
+    lambda: |-
+      #ifdef BOARD_HAS_PSRAM
+        return esp_spiram_get_size() / 1024.0;
+      #else
+        return 0.0;
+      #endif
+
+  - platform: template
+    name: "Free Heap"
+    id: sensor_heap
+    unit_of_measurement: "KB"
+    update_interval: 30s
+    entity_category: diagnostic
+    lambda: |-
+      return esp_get_free_heap_size() / 1024.0;
+
+  - platform: wifi_signal
+    name: "WiFi Signal Monitor"
+    id: sensor_wifi
+    update_interval: 30s
+    entity_category: diagnostic
+
+  - platform: homeassistant
+    id: ha_statie_temp
+    entity_id: sensor.statie_meteo_temperatura
+    unit_of_measurement: "°C"
+
+  - platform: homeassistant
+    id: ha_statie_lux
+    entity_id: sensor.statie_meteo_luminozitate
+    unit_of_measurement: "lx"
+
+  - platform: homeassistant
+    id: ha_dorm_temp
+    entity_id: sensor.temp_dormitor_1
+    unit_of_measurement: "°C"
+
+  - platform: homeassistant
+    id: ha_dorm_umid
+    entity_id: sensor.umid_dormitor_1
+    unit_of_measurement: "%"

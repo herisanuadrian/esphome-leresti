@@ -1,0 +1,8 @@
+# DEPENDS ON: buzzer_out (actuators/output.yaml)
+# EXPOSES: (nothing — rtttl.play is triggered from network/api.yaml services)
+
+# ─── Buzzer pasiv RTTTL ───────────────────────────────────────────
+rtttl:
+  output: buzzer_out
+  on_finished_playback:
+    - logger.log: "Buzzer finished"

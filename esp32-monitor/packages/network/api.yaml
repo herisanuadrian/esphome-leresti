@@ -1,0 +1,49 @@
+# DEPENDS ON: show_notification (automations/script.yaml), rtttl.play (actuators/rtttl.yaml)
+# EXPOSES: esphome.esp32_monitor_alarma_picaturi, esphome.esp32_monitor_buton_panica, esphome.esp32_monitor_prezenta_curte, esphome.esp32_monitor_prezenta_gradina, esphome.esp32_monitor_usa_acces, esphome.esp32_monitor_usa_acces_2, esphome.esp32_monitor_buzzer_melodie (API services)
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+  services:
+    - service: alarma_picaturi
+      then:
+        - script.execute:
+            id: show_notification
+            msg: "Alarma Picaturi"
+        - rtttl.play: "picaturi:d=8,o=7,b=160:e,p,e,p,e"
+    - service: buton_panica
+      then:
+        - script.execute:
+            id: show_notification
+            msg: "Buton Panica!"
+        - rtttl.play: "panica:d=4,o=7,b=200:c,e,g,c,e,g,c"
+    - service: prezenta_curte
+      then:
+        - script.execute:
+            id: show_notification
+            msg: "Prezenta Curte"
+        - rtttl.play: "curte:d=8,o=7,b=150:c,e,g"
+    - service: prezenta_gradina
+      then:
+        - script.execute:
+            id: show_notification
+            msg: "Prezenta Gradina"
+        - rtttl.play: "gradina:d=8,o=7,b=150:g,e,c"
+    - service: usa_acces
+      then:
+        - script.execute:
+            id: show_notification
+            msg: "Usa Acces"
+        - rtttl.play: "acces:d=16,o=7,b=140:c,e,g"
+    - service: usa_acces_2
+      then:
+        - script.execute:
+            id: show_notification
+            msg: "Usa Acces 2"
+        - rtttl.play: "acces2:d=16,o=7,b=140:g,e,c"
+    - service: buzzer_melodie
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'

@@ -1,0 +1,102 @@
+# DEPENDS ON: ha_time (time/time.yaml), backlight (actuators/light.yaml), sensor_wifi, ha_dorm_temp, ha_dorm_umid, ha_statie_temp, ha_statie_lux (sensors/sensor.yaml), p1_time/p1_seconds/p1_date/p1_dorm_temp/p1_dorm_umid/p1_wifi (ui/lvgl_page_clock.yaml), p2_temp/p2_lux/p2_wifi (ui/lvgl_page_exterior.yaml), p3_time/p3_temp/p3_umid/p3_wifi (ui/lvgl_page_dormitor.yaml)
+# EXPOSES: (nothing — periodic UI update logic)
+
+# ─── Actualizare UI ───────────────────────────────────────────────
+interval:
+  # ─── Programare backlight 06:00 - 21:00 ──────────────────────
+  - interval: 60s
+    then:
+      - lambda: |-
+          auto time = id(ha_time).now();
+          if (!time.is_valid()) return;
+          int hour = time.hour;
+          if (hour >= 6 && hour < 21) {
+            auto call = id(backlight).turn_on();
+            call.perform();
+          } else {
+            auto call = id(backlight).turn_off();
+            call.perform();
+          }
+
+  # ─── Schimbare automata pagina la 6 secunde ───────────────────
+  - interval: 6s
+    then:
+      - lvgl.page.next:
+          animation: MOVE_LEFT
+          time: 300ms
+
+  - interval: 1s
+    then:
+      - lvgl.label.update:
+          id: p1_time
+          text: !lambda |-
+            return id(ha_time).now().strftime("%H:%M");
+      - lvgl.label.update:
+          id: p1_seconds
+          text: !lambda |-
+            return id(ha_time).now().strftime(":%S");
+      - lvgl.label.update:
+          id: p1_date
+          text: !lambda |-
+            return id(ha_time).now().strftime("%a, %d %B %Y");
+      - lvgl.label.update:
+          id: p3_time
+          text: !lambda |-
+            return id(ha_time).now().strftime("%H:%M | %d %b %Y");
+
+  - interval: 30s
+    then:
+      - lvgl.label.update:
+          id: p1_wifi
+          text: !lambda |-
+            char buf[16];
+            snprintf(buf, sizeof(buf), "%.0f dBm", id(sensor_wifi).state);
+            return std::string(buf);
+      - lvgl.label.update:
+          id: p2_wifi
+          text: !lambda |-
+            char buf[16];
+            snprintf(buf, sizeof(buf), "%.0f dBm", id(sensor_wifi).state);
+            return std::string(buf);
+      - lvgl.label.update:
+          id: p3_wifi
+          text: !lambda |-
+            char buf[16];
+            snprintf(buf, sizeof(buf), "%.0f dBm", id(sensor_wifi).state);
+            return std::string(buf);
+      - lvgl.label.update:
+          id: p1_dorm_temp
+          text: !lambda |-
+            char buf[12];
+            snprintf(buf, sizeof(buf), "%.1f°C", id(ha_dorm_temp).state);
+            return std::string(buf);
+      - lvgl.label.update:
+          id: p1_dorm_umid
+          text: !lambda |-
+            char buf[8];
+            snprintf(buf, sizeof(buf), "%.0f%%", id(ha_dorm_umid).state);
+            return std::string(buf);
+      - lvgl.label.update:
+          id: p2_temp
+          text: !lambda |-
+            char buf[8];
+            snprintf(buf, sizeof(buf), "%.1f", id(ha_statie_temp).state);
+            return std::string(buf);
+      - lvgl.label.update:
+          id: p2_lux
+          text: !lambda |-
+            char buf[8];
+            snprintf(buf, sizeof(buf), "%.0f", id(ha_statie_lux).state);
+            return std::string(buf);
+      - lvgl.label.update:
+          id: p3_temp
+          text: !lambda |-
+            char buf[8];
+            snprintf(buf, sizeof(buf), "%.1f", id(ha_dorm_temp).state);
+            return std::string(buf);
+      - lvgl.label.update:
+          id: p3_umid
+          text: !lambda |-
+            char buf[8];
+            snprintf(buf, sizeof(buf), "%.0f", id(ha_dorm_umid).state);
+            return std::string(buf);

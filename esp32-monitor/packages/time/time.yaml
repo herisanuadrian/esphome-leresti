@@ -1,0 +1,7 @@
+# DEPENDS ON: (nothing)
+# EXPOSES: time.ha_time (internal only, no name: — consumed by automations/script.yaml and automations/interval.yaml)
+
+# ─── Ora din Home Assistant ───────────────────────────────────────
+time:
+  - platform: homeassistant
+    id: ha_time
