@@ -5,9 +5,9 @@ You are a disciplined config engineer working on an existing ESPHome repo. You m
 ## Repo Layout
 
 - The repo root contains many independent single-file device configs (`esp-*.yaml`, `s2-*.yaml`). Each file is one device. They stay monolithic — never split one into packages unless explicitly asked.
-- `esp-tourbillon.yaml` + `esp-tourbillon/` is the exception: its config is split into package files linked via the `packages:` mechanism. This split is INTENTIONAL and preserving it is a hard requirement (see "esp-tourbillon Specifics" below).
 - `secrets.yaml` files hold credentials. Never print, log, or commit their values.
 - Never touch: `.esphome/`, `build/`, `archive/`, `*.bin`, `*.elf`, `*.map`.
+- `metadata/INDEX.md` holds a one-row-per-device map of every config in this repo (name, board, purpose, exact sensors/entities exposed, HA entities consumed). See "Repo Metadata" below for when to read/update it.
 - **Lambdas:** many files are lambda-heavy. Lambdas are C++ embedded in YAML block scalars. Treat every `lambda:` block as C++, not as YAML text.
 
 ## Economy
@@ -53,7 +53,7 @@ Optimize for (1) accuracy — irrelevant context degrades answers — and (2) ou
 3. **Apply.** Make small, focused edits. One logical change at a time.
 4. **Verify.** Run `./validate.sh` (macOS/Linux) or `.\validate.ps1` (Windows) after every change. A task is not done until validation passes — never claim success without it. If the change touched a lambda, additionally say it needs a user-run compile.
 
-Exception to confirmation: regenerating a derived file (`packages/INDEX.md` via `./reindex`) needs no confirmation — rebuild and report.
+Exception to confirmation: regenerating a derived file (`packages/INDEX.md` via `./reindex`) needs no confirmation — rebuild and report. Same for updating the affected row(s) in `metadata/INDEX.md` alongside a config change — no separate confirmation needed.
 
 ## Git
 
@@ -69,19 +69,6 @@ Exception to confirmation: regenerating a derived file (`packages/INDEX.md` via 
 - Offload state to files, not the transcript: write decisions and discovered facts into the relevant `NOTES.md` as you go, so a fresh session can resume from files.
 - If the conversation grows heavy: suggest `/clear` + re-reading notes over `/compact` — a short clean context beats a lossy summary.
 - No summarizing previous exchanges unless asked. No restating the problem before answering. No filler phrases.
-
-## esp-tourbillon Specifics
-
-These rules apply only inside `esp-tourbillon/`; other device configs are single files and none of this applies to them.
-
-- Config is composed from `esp-tourbillon/packages/<domain>/<feature>.yaml` files via `packages:` in `esp-tourbillon.yaml`.
-- Orientation / "where does X live": read `esp-tourbillon/packages/INDEX.md` (the pre-digested map). Never recursively read `packages/` for an overview.
-- Domain notes live in `packages/<domain>/NOTES.md`. Read the domain's NOTES.md before touching any file in that domain; update it when the domain changes.
-- Each package file starts with `# DEPENDS ON:` and `# EXPOSES:` comments — keep them accurate when editing.
-- All device constants live in the main `substitutions:` block of `esp-tourbillon.yaml`. Packages only consume them.
-- New feature = new package file in the right domain. Never append functionality to the main config. Before creating a package, check `INDEX.md` (or `grep -rl "keyword" packages/`) for an existing one.
-- `packages/INDEX.md` is derived — never hand-edit it. After adding, moving, or renaming a package, run `./reindex` (from repo root) to regenerate it, and update the domain's `NOTES.md`.
-- One domain per session where possible. State the current file explicitly in each message.
 
 ## Anti-Drift
 
@@ -105,6 +92,16 @@ These rules apply only inside `esp-tourbillon/`; other device configs are single
   - `DONE — validated` (or `DONE — validated, needs compile` for lambda changes)
   - `BLOCKED — <one-line reason>`
   - `QUESTION — <one specific question>`
+
+## Repo Metadata
+
+`metadata/INDEX.md` is a hand-maintained table with one row per device config (filename, `esphome.name`, board, domain, purpose, exact entities exposed, HA entities consumed, notes) — a high-level map so you don't need to open every `*.yaml` to orient yourself, including which sensors/switches a device exposes and which external HA entities it reads or writes. `metadata/PROTOCOL.md` defines the row schema and maintenance rules.
+
+- Read `metadata/INDEX.md` when you need repo-wide orientation: picking which device(s) a task concerns, checking whether something already exists before adding it, or any "what devices are there / what does X do" question. Skip it if the user already named the exact file(s) to work on.
+- Read `metadata/PROTOCOL.md` in full before creating a new row or editing the table's structure; otherwise just edit the row per its existing format.
+- After any change to a device config's name, board, purpose/domain, or the set of entities it exposes/consumes (adding, removing, or renaming a `name:`, or a `platform: homeassistant` / `homeassistant.service` reference), update its row in `metadata/INDEX.md` in the same turn — see `metadata/PROTOCOL.md` for exactly which changes qualify. If you can't tell whether a change is significant enough to warrant an update, ask one specific question rather than guessing.
+- Adding a new root-level device config or deleting/archiving one means adding or removing its row.
+- There is no regeneration script for this file (unlike `knowledge-base/`) — it's maintained by direct, minimal edits to the affected row(s) only.
 
 ## ESPHome Knowledge Base
 
