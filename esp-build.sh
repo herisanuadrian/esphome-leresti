@@ -46,21 +46,20 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   exit 1
 fi
 
-# Extract current version and increment
+# Extract current version and increment (skip if not defined in substitutions)
 CURRENT_VERSION=$(grep "device_version:" "$CONFIG_FILE" | sed 's/.*"\(.*\)".*/\1/')
 if [[ -z "$CURRENT_VERSION" ]]; then
-  echo "Error: device_version not found in $CONFIG_FILE" >&2
-  exit 1
+  echo "No device_version found in $CONFIG_FILE, skipping version increment"
+else
+  MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+  MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+  NEW_MINOR=$((MINOR + 1))
+  NEW_VERSION="$MAJOR.$NEW_MINOR"
+
+  echo "Incrementing version: $CURRENT_VERSION → $NEW_VERSION"
+  sed -i.bak "s/device_version: \"$CURRENT_VERSION\"/device_version: \"$NEW_VERSION\"/" "$CONFIG_FILE"
+  rm -f "$CONFIG_FILE.bak"
 fi
-
-MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
-MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
-NEW_MINOR=$((MINOR + 1))
-NEW_VERSION="$MAJOR.$NEW_MINOR"
-
-echo "Incrementing version: $CURRENT_VERSION → $NEW_VERSION"
-sed -i.bak "s/device_version: \"$CURRENT_VERSION\"/device_version: \"$NEW_VERSION\"/" "$CONFIG_FILE"
-rm -f "$CONFIG_FILE.bak"
 
 echo "Compiling $CONFIG_FILE..."
 esphome compile "$CONFIG_FILE"

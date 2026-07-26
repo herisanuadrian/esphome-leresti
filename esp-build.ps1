@@ -21,27 +21,25 @@ if (-not (Test-Path $ConfigFile)) {
     exit 1
 }
 
-# Extract current version and increment
+# Extract current version and increment (skip if not defined in substitutions)
 $VersionLine = Select-String -Path $ConfigFile -Pattern "device_version:" | Select-Object -First 1
 if (-not $VersionLine) {
-    Write-Error "Error: device_version not found in $ConfigFile"
-    exit 1
+    Write-Host "No device_version found in $ConfigFile, skipping version increment"
+} else {
+    $CurrentVersion = [regex]::Match($VersionLine.Line, '"(.*)"').Groups[1].Value
+    if (-not $CurrentVersion) {
+        Write-Host "No device_version found in $ConfigFile, skipping version increment"
+    } else {
+        $Parts = $CurrentVersion.Split(".")
+        $Major = $Parts[0]
+        $Minor = [int]$Parts[1]
+        $NewMinor = $Minor + 1
+        $NewVersion = "$Major.$NewMinor"
+
+        Write-Host "Incrementing version: $CurrentVersion -> $NewVersion"
+        (Get-Content $ConfigFile) -replace [regex]::Escape("device_version: `"$CurrentVersion`""), "device_version: `"$NewVersion`"" | Set-Content $ConfigFile
+    }
 }
-
-$CurrentVersion = [regex]::Match($VersionLine.Line, '"(.*)"').Groups[1].Value
-if (-not $CurrentVersion) {
-    Write-Error "Error: device_version not found in $ConfigFile"
-    exit 1
-}
-
-$Parts = $CurrentVersion.Split(".")
-$Major = $Parts[0]
-$Minor = [int]$Parts[1]
-$NewMinor = $Minor + 1
-$NewVersion = "$Major.$NewMinor"
-
-Write-Host "Incrementing version: $CurrentVersion -> $NewVersion"
-(Get-Content $ConfigFile) -replace [regex]::Escape("device_version: `"$CurrentVersion`""), "device_version: `"$NewVersion`"" | Set-Content $ConfigFile
 
 Write-Host "Compiling $ConfigFile..."
 esphome compile $ConfigFile
