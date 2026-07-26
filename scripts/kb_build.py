@@ -196,9 +196,9 @@ def scan_yaml_dir(root: Path) -> set[str]:
 
 def scan_yaml_files(paths: list[Path]) -> set[str]:
     """Scan only the given file(s), following !include / !include_dir_*
-    references (the esp-tourbillon packages: mechanism) so a single entry
-    file like esp-tourbillon.yaml still resolves its real package tree --
-    without touching any other device's config in the repo."""
+    references (the packages: mechanism) so a single entry file still
+    resolves its real package tree -- without touching any other
+    device's config in the repo."""
     found = set()
     visited = set()
     queue = [Path(p).resolve() for p in paths]

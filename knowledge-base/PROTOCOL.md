@@ -20,11 +20,11 @@ Read this in full only when you've been triggered here from CLAUDE.md (lambda wo
    file(s) actually in the current session, not the whole repo (per
    CLAUDE.md: one domain per session, touch the smallest number of files
    possible). Pass the specific device file(s); `!include` /
-   `!include_dir_*` references (the esp-tourbillon packages mechanism) are
+   `!include_dir_*` references (the `packages:` mechanism) are
    followed automatically, so a single entry file resolves its real
    package tree without pulling in unrelated devices:
    ```
-   python3 scripts/kb_build.py --files esp-tourbillon.yaml
+   python3 scripts/kb_build.py --files _powmr-inverter-/main.yaml
    ```
    or, for a single-file device config:
    ```
