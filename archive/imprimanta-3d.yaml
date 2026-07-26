@@ -1,0 +1,30 @@
+esphome:
+  name: imprimanta-3d
+  friendly_name: imprimanta-3D
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "GdTX5BvB0y8OQstRLahW0+dsEFh00wqFzsYFSaD2PyE="
+
+ota:
+  - platform: esphome
+    password: "0b8b0102ec24ae8915c63c39e349e706"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Imprimanta-3D Fallback Hotspot"
+    password: "YshnVtpcVr9b"
+
+captive_portal:
+    

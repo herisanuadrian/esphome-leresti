@@ -1,0 +1,68 @@
+esphome:
+  name: "contor-apa-2-retea"
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "b108ebea21a5671e665c0bcf35350437"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou  
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3
+      password: !secret wifi_password_nou
+
+
+sensor:
+  - platform: pulse_counter
+    pin: 13
+    unit_of_measurement: 'L'
+    accuracy_decimals: 0
+    filters:
+      - multiply: 0.0025
+    name: 'Contor apa 2 L/min'
+    #internal_filter: 300ms 
+    total:
+      unit_of_measurement: 'm³'
+      name: 'Contor apa 2 m³'
+      state_class: total_increasing
+      device_class: water
+      accuracy_decimals: 3
+      filters:
+        - multiply: 0.0000025
+    update_interval: 20s
+
+  - platform: pulse_counter
+    pin: 
+      number: 12
+     
+    unit_of_measurement: 'L'
+    accuracy_decimals: 2
+    #internal_filter: 50ms 
+    filters:
+      - multiply: 0.329
+    name: 'Rain Gauge L/h'
+    update_interval: 30s
+    total:
+      unit_of_measurement: 'L'
+      name: 'Rain Gauge Total'
+      state_class: total_increasing
+      device_class: water
+      accuracy_decimals: 3
+      filters:
+      - multiply: 0.329

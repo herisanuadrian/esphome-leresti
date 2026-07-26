@@ -1,0 +1,58 @@
+esphome:
+  name: invertor-bk77729
+  friendly_name: "Invertor BK77729"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"
+
+logger:
+  level: DEBUG
+  baud_rate: 0
+
+uart:
+  id: uart_invertor
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 2400
+  stop_bits: 1
+  parity: NONE
+
+interval:
+  - interval: 100ms
+    then:
+      - lambda: |-
+          if (id(uart_invertor).available()) {
+            std::vector<uint8_t> buf;
+            while (id(uart_invertor).available()) {
+              uint8_t b;
+              id(uart_invertor).read_byte(&b);
+              buf.push_back(b);
+            }
+            std::string hex = "";
+            char tmp[4];
+            for (auto byte : buf) {
+              snprintf(tmp, sizeof(tmp), "%02X:", byte);
+              hex += tmp;
+            }
+            if (!hex.empty()) {
+              hex.pop_back();
+              ESP_LOGD("uart_raw", "RX: %s", hex.c_str());
+            }
+          }

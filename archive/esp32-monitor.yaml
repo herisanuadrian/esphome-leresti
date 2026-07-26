@@ -1,0 +1,32 @@
+esphome:
+  name: esp32-monitor
+  friendly_name: esp32-monitor
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "NPQQyiDlvLHtvnnrknUEEJJYwDukJSdO80eNw495Hv8="
+
+ota:
+  - platform: esphome
+    password: "8def2ac6e51c3a22d3e67b9e3bf96365"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp32-Monitor Fallback Hotspot"
+    password: "hMtBkJIwNc1s"
+
+captive_portal:
+    

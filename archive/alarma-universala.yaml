@@ -1,0 +1,30 @@
+esphome:
+  name: alarma-universala
+  friendly_name: alarma-universala
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "vspsGY1g4hRterTd7Nh01doPCBfKjk/wPa2lLSgw5KI="
+
+ota:
+  - platform: esphome
+    password: "10be28533dfbe9f0148dfb453084c402"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Alarma-Universala"
+    password: "Cf0E1c9XBI7B"
+
+captive_portal:
+    

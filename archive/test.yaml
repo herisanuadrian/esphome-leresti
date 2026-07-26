@@ -1,0 +1,46 @@
+
+# ============================================
+#  ESPHome - Curatire Cache / Cleanup
+#  Home Assistant Shell Commands
+#  Adauga in configuration.yaml:
+#    shell_command: !include esphome-cleanup.yaml
+# ============================================
+
+# --- Curata un singur device ---
+esphome_clean_centrala_lemne:
+  command: >
+    rm -rf /config/esphome/.pioenvs/centrala-lemne &&
+    rm -rf /config/esphome/.piolibdeps/centrala-lemne &&
+    echo "✓ Cache centrala-lemne sters cu succes"
+
+# --- Curata toate device-urile ---
+esphome_clean_all:
+  command: >
+    rm -rf /config/esphome/.pioenvs &&
+    rm -rf /config/esphome/.piolibdeps &&
+    echo "✓ Toate cache-urile ESPHome sterse"
+
+# --- Curata PlatformIO global ---
+esphome_clean_platformio:
+  command: >
+    rm -rf /root/.platformio/packages &&
+    rm -rf /root/.platformio/platforms &&
+    echo "✓ Cache PlatformIO global sters"
+
+# --- Curata TOT (ESPHome + PlatformIO) ---
+esphome_clean_full:
+  command: >
+    rm -rf /config/esphome/.pioenvs &&
+    rm -rf /config/esphome/.piolibdeps &&
+    rm -rf /root/.platformio/packages &&
+    rm -rf /root/.platformio/platforms &&
+    echo "✓ Curatire completa finalizata"
+
+# --- Recompileaza centrala-lemne dupa curatire ---
+esphome_rebuild_centrala_lemne:
+  command: >
+    rm -rf /config/esphome/.pioenvs/centrala-lemne &&
+    rm -rf /config/esphome/.piolibdeps/centrala-lemne &&
+    esphome compile /config/esphome/centrala-lemne.yaml &&
+    echo "✓ Rebuild centrala-lemne finalizat"
+  timeout: 300    
