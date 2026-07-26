@@ -1,0 +1,688 @@
+{
+  "adc": {
+    "files": [
+      "adc_sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/adc/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "apds9960": {
+    "files": [
+      "apds9960.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/apds9960/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "binary_sensor": {
+    "files": [
+      "automation.h",
+      "binary_sensor.h",
+      "filter.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/binary_sensor/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "bme280_i2c": {
+    "files": [
+      "bme280_i2c.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/bme280_i2c/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "button": {
+    "files": [
+      "automation.h",
+      "button.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/button/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "captive_portal": {
+    "files": [
+      "captive_index.h",
+      "captive_portal.h",
+      "dns_server_esp32_idf.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/captive_portal/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "cd74hc4067": {
+    "files": [
+      "cd74hc4067.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/cd74hc4067/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "cwww": {
+    "files": [
+      "cwww_light_output.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/cwww/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "dallas_temp": {
+    "files": [
+      "dallas_temp.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/dallas_temp/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "display": {
+    "files": [
+      "display.h",
+      "display_buffer.h",
+      "display_color_utils.h",
+      "rect.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/display/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "display_menu_base": {
+    "files": [
+      "automation.h",
+      "display_menu_base.h",
+      "menu_item.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/display_menu_base/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "esp32": {
+    "files": [
+      "crash_handler.h",
+      "gpio.h",
+      "hal.h",
+      "preference_backend.h",
+      "preferences.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/esp32/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "esp32_rmt_led_strip": {
+    "files": [
+      "led_strip.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/esp32_rmt_led_strip/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "esp8266": {
+    "files": [
+      "core.h",
+      "crash_handler.h",
+      "gpio.h",
+      "hal.h",
+      "preference_backend.h",
+      "preferences.h",
+      "throw_stubs.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/esp8266/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "esp8266_pwm": {
+    "files": [
+      "esp8266_pwm.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/esp8266_pwm/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "esphome": {
+    "files": [
+      "ota/ota_esphome.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/esphome/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "fan": {
+    "files": [
+      "automation.h",
+      "fan.h",
+      "fan_traits.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/fan/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "font": {
+    "files": [
+      "font.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/font/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "gpio": {
+    "files": [
+      "binary_sensor/gpio_binary_sensor.h",
+      "one_wire/gpio_one_wire.h",
+      "output/gpio_binary_output.h",
+      "switch/gpio_switch.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/gpio/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "graphical_display_menu": {
+    "files": [
+      "graphical_display_menu.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/graphical_display_menu/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "homeassistant": {
+    "files": [
+      "binary_sensor/homeassistant_binary_sensor.h",
+      "number/homeassistant_number.h",
+      "sensor/homeassistant_sensor.h",
+      "switch/homeassistant_switch.h",
+      "text_sensor/homeassistant_text_sensor.h",
+      "time/homeassistant_time.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/homeassistant/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "http_request": {
+    "files": [
+      "http_request.h",
+      "http_request_arduino.h",
+      "http_request_host.h",
+      "http_request_idf.h",
+      "httplib.h",
+      "ota/automation.h",
+      "ota/ota_http_request.h",
+      "update/http_request_update.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/http_request/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "i2c": {
+    "files": [
+      "i2c.h",
+      "i2c_bus.h",
+      "i2c_bus_arduino.h",
+      "i2c_bus_esp_idf.h",
+      "i2c_bus_host.h",
+      "i2c_bus_zephyr.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/i2c/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "i2s_audio": {
+    "files": [
+      "i2s_audio.h",
+      "microphone/i2s_audio_microphone.h",
+      "speaker/i2s_audio_spdif.h",
+      "speaker/i2s_audio_speaker.h",
+      "speaker/i2s_audio_speaker_standard.h",
+      "speaker/spdif_encoder.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/i2s_audio/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "image": {
+    "files": [
+      "image.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/image/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "json": {
+    "files": [
+      "json_util.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/json/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "ledc": {
+    "files": [
+      "ledc_output.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/ledc/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "light": {
+    "files": [
+      "addressable_light.h",
+      "addressable_light_effect.h",
+      "addressable_light_wrapper.h",
+      "automation.h",
+      "base_light_effects.h",
+      "color_mode.h",
+      "esp_color_correction.h",
+      "esp_color_view.h",
+      "esp_hsv_color.h",
+      "esp_range_view.h",
+      "light_call.h",
+      "light_color_values.h",
+      "light_effect.h",
+      "light_json_schema.h",
+      "light_output.h",
+      "light_state.h",
+      "light_traits.h",
+      "light_transformer.h",
+      "transformers.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/light/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "lvgl": {
+    "files": [
+      "animation.h",
+      "light/lvgl_light.h",
+      "lvgl_esphome.h",
+      "lvgl_proxy.h",
+      "number/lvgl_number.h",
+      "select/lvgl_select.h",
+      "switch/lvgl_switch.h",
+      "text/lvgl_text.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/lvgl/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "media_player": {
+    "files": [
+      "automation.h",
+      "media_player.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/media_player/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "mipi_spi": {
+    "files": [
+      "mipi_spi.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/mipi_spi/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "monochromatic": {
+    "files": [
+      "monochromatic_light_output.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/monochromatic/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "mqtt": {
+    "files": [
+      "custom_mqtt_device.h",
+      "mqtt_alarm_control_panel.h",
+      "mqtt_backend.h",
+      "mqtt_backend_esp32.h",
+      "mqtt_backend_esp8266.h",
+      "mqtt_backend_libretiny.h",
+      "mqtt_binary_sensor.h",
+      "mqtt_button.h",
+      "mqtt_client.h",
+      "mqtt_climate.h",
+      "mqtt_component.h",
+      "mqtt_const.h",
+      "mqtt_cover.h",
+      "mqtt_date.h",
+      "mqtt_datetime.h",
+      "mqtt_event.h",
+      "mqtt_fan.h",
+      "mqtt_light.h",
+      "mqtt_lock.h",
+      "mqtt_number.h",
+      "mqtt_select.h",
+      "mqtt_sensor.h",
+      "mqtt_switch.h",
+      "mqtt_text.h",
+      "mqtt_text_sensor.h",
+      "mqtt_time.h",
+      "mqtt_update.h",
+      "mqtt_valve.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/mqtt/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "network": {
+    "files": [
+      "ip_address.h",
+      "network_component.h",
+      "util.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/network/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "number": {
+    "files": [
+      "automation.h",
+      "number.h",
+      "number_call.h",
+      "number_traits.h",
+      "sensor/number_sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/number/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "one_wire": {
+    "files": [
+      "one_wire.h",
+      "one_wire_bus.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/one_wire/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "output": {
+    "files": [
+      "automation.h",
+      "binary_output.h",
+      "button/output_button.h",
+      "float_output.h",
+      "lock/output_lock.h",
+      "switch/output_switch.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/output/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "pca9685": {
+    "files": [
+      "pca9685_output.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/pca9685/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "power_supply": {
+    "files": [
+      "power_supply.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/power_supply/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "pulse_counter": {
+    "files": [
+      "automation.h",
+      "pulse_counter_sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/pulse_counter/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "remote_receiver": {
+    "files": [
+      "remote_receiver.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/remote_receiver/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "rotary_encoder": {
+    "files": [
+      "rotary_encoder.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/rotary_encoder/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "rtttl": {
+    "files": [
+      "rtttl.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/rtttl/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "script": {
+    "files": [
+      "script.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/script/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "select": {
+    "files": [
+      "automation.h",
+      "select.h",
+      "select_call.h",
+      "select_traits.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/select/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "sensor": {
+    "files": [
+      "automation.h",
+      "filter.h",
+      "sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/sensor/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "servo": {
+    "files": [
+      "servo.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/servo/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "sntp": {
+    "files": [
+      "sntp_component.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/sntp/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "speaker": {
+    "files": [
+      "automation.h",
+      "media_player/audio_pipeline.h",
+      "media_player/automation.h",
+      "media_player/speaker_media_player.h",
+      "speaker.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/speaker/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "speed": {
+    "files": [
+      "fan/speed_fan.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/speed/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "spi": {
+    "files": [
+      "spi.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/spi/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "ssd1306_base": {
+    "files": [
+      "ssd1306_base.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/ssd1306_base/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "ssd1306_i2c": {
+    "files": [
+      "ssd1306_i2c.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/ssd1306_i2c/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "st7735": {
+    "files": [
+      "st7735.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/st7735/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "status": {
+    "files": [
+      "status_binary_sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/status/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "stepper": {
+    "files": [
+      "stepper.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/stepper/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "switch": {
+    "files": [
+      "automation.h",
+      "binary_sensor/switch_binary_sensor.h",
+      "switch.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/switch/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "template": {
+    "files": [
+      "alarm_control_panel/template_alarm_control_panel.h",
+      "binary_sensor/template_binary_sensor.h",
+      "button/template_button.h",
+      "cover/template_cover.h",
+      "datetime/template_date.h",
+      "datetime/template_datetime.h",
+      "datetime/template_time.h",
+      "event/template_event.h",
+      "fan/template_fan.h",
+      "lock/automation.h",
+      "lock/template_lock.h",
+      "number/template_number.h",
+      "output/template_output.h",
+      "select/template_select.h",
+      "sensor/template_sensor.h",
+      "switch/template_switch.h",
+      "text/template_text.h",
+      "text_sensor/template_text_sensor.h",
+      "valve/automation.h",
+      "valve/template_valve.h",
+      "water_heater/automation.h",
+      "water_heater/template_water_heater.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/template/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "text": {
+    "files": [
+      "automation.h",
+      "text.h",
+      "text_call.h",
+      "text_sensor/text_text_sensor.h",
+      "text_traits.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/text/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "text_sensor": {
+    "files": [
+      "automation.h",
+      "filter.h",
+      "text_sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/text_sensor/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "uln2003": {
+    "files": [
+      "uln2003.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/uln2003/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "uptime": {
+    "files": [
+      "sensor/uptime_seconds_sensor.h",
+      "sensor/uptime_timestamp_sensor.h",
+      "text_sensor/uptime_text_sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/uptime/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "version": {
+    "files": [
+      "version_text_sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/version/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "wifi": {
+    "files": [
+      "automation.h",
+      "wifi_component.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/wifi/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "wifi_password": {
+    "ref": "2026.7.2",
+    "status": "not_found"
+  },
+  "wifi_signal": {
+    "files": [
+      "wifi_signal_sensor.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/wifi_signal/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "wifi_ssid": {
+    "ref": "2026.7.2",
+    "status": "not_found"
+  },
+  "zehnder_comfoair_q": {
+    "ref": "2026.7.2",
+    "status": "not_found"
+  }
+}
