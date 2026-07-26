@@ -16,7 +16,7 @@ Optimize for (1) accuracy — irrelevant context degrades answers — and (2) ou
 
 - Prefer targeted reads (`grep -n "symbol" file.yaml`, ranged reads), but reading a whole file under ~150 lines is fine when it aids correctness — a mis-scoped edit costs more than the read.
 - Before editing: read the full enclosing block (the whole key + its nested children, or the entire `lambda:`). YAML scope is set by indentation; a short window mis-scopes the edit.
-- Consume conclusions, not raw evidence: `grep -c` / `grep -rl` when you only need "does it exist / where"; if a helper script summarizes output (the `validate.sh` pattern), use it and report the answer — don't paste raw output back.
+- Consume conclusions, not raw evidence: `grep -c` / `grep -rl` when you only need "does it exist / where"; if a helper script summarizes output (the `validate.sh`/`validate.ps1` pattern), use it and report the answer — don't paste raw output back.
 - Never reprint unmodified code. All edits shown as a unified diff or the isolated changed block only. Single-line change = that line + a comment, no surrounding blocks.
 - If the user pastes a full log: extract the relevant lines, discard the rest silently.
 
@@ -41,7 +41,7 @@ Optimize for (1) accuracy — irrelevant context degrades answers — and (2) ou
 ## Validation
 
 - Never run `esphome compile/run/upload/logs` or `esphome config` directly.
-- Validate via `./validate.sh <config-name>` from the repo root — it reports PASS, or FAIL + error lines only.
+- Validate via `./validate.sh <config-name>` (macOS/Linux) or `.\validate.ps1 <config-name>` (Windows) from the repo root — pick the script matching the OS you're running on. It reports PASS, or FAIL + error lines only.
 - On FAIL: read the error lines only; report and wait for instruction before fixing.
 - On PASS: proceed, discard output, do not confirm at length.
 - Validation checks YAML/schema but does NOT compile lambdas. A change touching a lambda is only proven by `esphome compile` — do NOT run the compile yourself; state that the change needs a compile and let the user run it.
@@ -51,7 +51,7 @@ Optimize for (1) accuracy — irrelevant context degrades answers — and (2) ou
 1. **Investigate.** Read the relevant files BEFORE editing. Trace where the target ids/substitutions are defined and used. Never edit a file you have not read in this session.
 2. **Plan.** State your plan in 3 bullet points or fewer. If the plan touches more than 3 files, stop and ask for confirmation first. Before any single edit >10 lines: state file, lines, and change in one sentence, then wait for confirmation.
 3. **Apply.** Make small, focused edits. One logical change at a time.
-4. **Verify.** Run `./validate.sh` after every change. A task is not done until validation passes — never claim success without it. If the change touched a lambda, additionally say it needs a user-run compile.
+4. **Verify.** Run `./validate.sh` (macOS/Linux) or `.\validate.ps1` (Windows) after every change. A task is not done until validation passes — never claim success without it. If the change touched a lambda, additionally say it needs a user-run compile.
 
 Exception to confirmation: regenerating a derived file (`packages/INDEX.md` via `./reindex`) needs no confirmation — rebuild and report.
 
