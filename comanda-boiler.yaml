@@ -66,7 +66,7 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
-  - id: boiler_pornit_dorit
+  - id: boilerul_este_pornit
     type: bool
     restore_value: false
     initial_value: 'false'
@@ -80,7 +80,7 @@ switch:
     restore_mode: RESTORE_DEFAULT_ON
     turn_off_action:
       - lambda: |-
-          if (id(boiler_pornit_dorit)) {
+          if (id(boilerul_este_pornit)) {
             id(opreste_boiler).execute();
           }
 
@@ -89,7 +89,7 @@ script:
     mode: single
     then:
       - globals.set:
-          id: boiler_pornit_dorit
+          id: boilerul_este_pornit
           value: 'true'
       - homeassistant.service:
           service: switch.turn_on
@@ -100,7 +100,7 @@ script:
     mode: single
     then:
       - globals.set:
-          id: boiler_pornit_dorit
+          id: boilerul_este_pornit
           value: 'false'
       - homeassistant.service:
           service: switch.turn_off
@@ -115,14 +115,14 @@ interval:
           float masurat = id(putere_masurata).state;
           if (isnan(productie) || isnan(masurat)) {
             id(contor_conditii_pornire) = 0;
-            if (id(boiler_pornit_dorit)) {
+            if (id(boilerul_este_pornit)) {
               id(opreste_boiler).execute();
             }
             return;
           }
           if (masurat > productie) {
             id(contor_conditii_pornire) = 0;
-            if (id(boiler_pornit_dorit)) {
+            if (id(boilerul_este_pornit)) {
               id(opreste_boiler).execute();
             }
             return;
@@ -132,6 +132,6 @@ interval:
           } else {
             id(contor_conditii_pornire) = 0;
           }
-          if (id(contor_conditii_pornire) >= 10 && !id(boiler_pornit_dorit) && id(comutator_general_boiler).state) {
+          if (id(contor_conditii_pornire) >= 10 && !id(boilerul_este_pornit) && id(comutator_general_boiler).state) {
             id(porneste_boiler).execute();
           }
