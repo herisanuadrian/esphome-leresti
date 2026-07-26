@@ -1,0 +1,124 @@
+esphome:
+  name: comanda-boiler
+
+# --- Context sistem: boiler electric alimentat din solar ---
+# switch.centrala_lemne_releu_static controleaza incalzirea unui boiler electric (2000W).
+# Energia electrica provine dintr-un sistem fotovoltaic:
+#   - panouri solare orientate SUD, inclinare 32 grade, putere maxima 3.5kW
+#   - invertor 6.2kW
+#   - baterii: 4x 12V 80Ah, inseriate
+#
+# Logica (din 2026-07-26): boilerul porneste/opreste dupa productia solara
+# reala, nu dupa un interval orar fix:
+#   - sensor.power_production_now = productie solara estimata (HA)
+#   - sensor.sa1_wi_fi_smart_power_transformer_puterea_fazei_a = putere
+#     masurata la iesirea invertorului (reflecta orice consum din casa,
+#     boiler inclus cand e pornit)
+# Oprire imediata daca masurat > productie estimata. Pornire doar dupa 5
+# minute sustinute in care masurat + 2000W (boiler anticipat) < productie.
+# Bucla de decizie unica (interval 30s) inlocuieste vechile trigger-uri
+# separate pe luminozitate + oprire fortata la ora 15:00, eliminand
+# race condition-ul cunoscut din varianta anterioara.
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  encryption:
+    key: "khTmptQ7yYhvP5yxwxTQOSNPs/RK4x+twiKqYqwO900="
+
+ota:
+  - platform: esphome
+    password: "c41e4c28c643ea2045016586d9ad3ecc"
+
+wifi:
+  min_auth_mode: WPA2
+  use_address: candel-p.local
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_2
+      password: !secret wifi_password_nou
+
+sensor:
+  - platform: homeassistant
+    id: putere_productie
+    entity_id: sensor.power_production_now
+
+  - platform: homeassistant
+    id: putere_masurata
+    entity_id: sensor.sa1_wi_fi_smart_power_transformer_puterea_fazei_a
+
+globals:
+  - id: putere_boiler
+    type: float
+    restore_value: false
+    initial_value: '2000'
+  - id: contor_conditii_pornire
+    type: int
+    restore_value: false
+    initial_value: '0'
+  - id: boiler_pornit_dorit
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+
+script:
+  - id: porneste_boiler
+    mode: single
+    then:
+      - globals.set:
+          id: boiler_pornit_dorit
+          value: 'true'
+      - homeassistant.service:
+          service: switch.turn_on
+          data:
+            entity_id: switch.centrala_lemne_releu_static
+
+  - id: opreste_boiler
+    mode: single
+    then:
+      - globals.set:
+          id: boiler_pornit_dorit
+          value: 'false'
+      - homeassistant.service:
+          service: switch.turn_off
+          data:
+            entity_id: switch.centrala_lemne_releu_static
+
+interval:
+  - interval: 30s
+    then:
+      - lambda: |-
+          float productie = id(putere_productie).state;
+          float masurat = id(putere_masurata).state;
+          if (isnan(productie) || isnan(masurat)) {
+            id(contor_conditii_pornire) = 0;
+            if (id(boiler_pornit_dorit)) {
+              id(opreste_boiler).execute();
+            }
+            return;
+          }
+          if (masurat > productie) {
+            id(contor_conditii_pornire) = 0;
+            if (id(boiler_pornit_dorit)) {
+              id(opreste_boiler).execute();
+            }
+            return;
+          }
+          if (masurat + id(putere_boiler) < productie) {
+            id(contor_conditii_pornire) += 1;
+          } else {
+            id(contor_conditii_pornire) = 0;
+          }
+          if (id(contor_conditii_pornire) >= 10 && !id(boiler_pornit_dorit)) {
+            id(porneste_boiler).execute();
+          }
