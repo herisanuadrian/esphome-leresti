@@ -26,6 +26,8 @@ $statuslineScript = @'
 # Bars share one color scale: green <50%, yellow 50-80%, red >=80%.
 # Port of the bash+jq+awk statusline.sh; reads the same JSON payload on stdin.
 
+[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+
 $raw = [Console]::In.ReadToEnd()
 $data = $raw | ConvertFrom-Json
 
@@ -58,8 +60,8 @@ function Format-Reset($resetsAt) {
     $now = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
     $secs = [double]$resetsAt - $now
     if ($secs -le 0) { return "" }
-    $h = [math]::Floor($secs / 3600)
-    $m = [math]::Floor(($secs % 3600) / 60)
+    $h = [int][math]::Floor($secs / 3600)
+    $m = [int][math]::Floor(($secs % 3600) / 60)
     if ($h -gt 0) { return "{0}h{1:D2}m" -f $h, $m }
     else { return "{0}m" -f $m }
 }
@@ -71,15 +73,21 @@ function Get-Bar($label, $p, [string]$suffix) {
     $f = [math]::Floor($p * $w / 100 + 0.5)
     if ($f -gt $w) { $f = $w }
     if ($f -lt 0) { $f = 0 }
-    $bar = ("█" * $f) + ("░" * ($w - $f))
+    $fullBlock = [char]0x2588
+    $lightShade = [char]0x2591
+    $middleDot = [char]0x00B7
     $col = "$esc[$(Get-Color $p)m"
+    $filledStr = "$col$("$fullBlock" * $f)$esc[0m"
+    $emptyStr = "$esc[2m$("$lightShade" * ($w - $f))$esc[0m"
+    $bar = "$filledStr$emptyStr"
+    $grey = "$esc[38;5;240m"
     $suffixStr = ""
-    if ($suffix -ne "") { $suffixStr = " $esc[2m$suffix$esc[0m" }
+    if ($suffix -ne "") { $suffixStr = " $grey$suffix$esc[0m" }
     $pctStr = "{0:0}" -f $p
-    return "  $esc[2m·$esc[0m  $label $col$bar$esc[0m $col$pctStr%$esc[0m$suffixStr"
+    return "  $esc[2m$middleDot$esc[0m  $label $bar $col$pctStr%$esc[0m$suffixStr"
 }
 
-$out  = "$esc[1;36m$model$esc[0m"
+$out  = "$esc[36m$model$esc[0m"
 $out += Get-Bar "ctx" $ctx (Format-TokenCount $tok)
 $out += Get-Bar "5h"  $five (Format-Reset $fiveResetAt)
 $out += Get-Bar "7d"  $seven (Format-Reset $sevenResetAt)
@@ -87,7 +95,7 @@ $out += Get-Bar "7d"  $seven (Format-Reset $sevenResetAt)
 [Console]::Out.Write($out)
 '@
 
-Set-Content -Path $statuslinePath -Value $statuslineScript -Encoding utf8NoBOM
+[System.IO.File]::WriteAllText($statuslinePath, $statuslineScript, (New-Object System.Text.UTF8Encoding($false)))
 
 $settingsPath = Join-Path $claudeDir "settings.json"
 if ((Test-Path $settingsPath) -and (Get-Item $settingsPath).Length -gt 0) {
@@ -107,7 +115,8 @@ if ($settings.PSObject.Properties.Name -contains "statusLine") {
     $settings | Add-Member -MemberType NoteProperty -Name "statusLine" -Value $statusLineValue
 }
 
-$settings | ConvertTo-Json -Depth 20 | Set-Content -Path $settingsPath -Encoding utf8NoBOM
+$settingsJson = $settings | ConvertTo-Json -Depth 20
+[System.IO.File]::WriteAllText($settingsPath, $settingsJson, (New-Object System.Text.UTF8Encoding($false)))
 
 Write-Host "Installed status line script at $statuslinePath"
 Write-Host "Updated statusLine command in $settingsPath"

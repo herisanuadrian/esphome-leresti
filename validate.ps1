@@ -11,8 +11,6 @@ if (-not (Test-Path $ConfigFile)) {
     $ConfigFile = "config/$ConfigName.yaml"
 }
 
-& ..\esphome-env\Scripts\Activate.ps1
-
 if (-not (Test-Path $ConfigFile)) {
     Write-Host "ERROR: Config file not found: $ConfigName.yaml"
     exit 1
