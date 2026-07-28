@@ -58,6 +58,42 @@ sensor:
     id: temperatura_centrala_lemne
     name: "Temp. Centrala Lemne"
 
+  - platform: homeassistant
+    id: ha_tensiune_baterie
+    entity_id: sensor.tensiune_baterie
+    on_value:
+      - lambda: |-
+          id(ultima_tensiune_ms) = millis();
+
+  - platform: homeassistant
+    id: ha_luminozitate
+    entity_id: sensor.statie_meteo_luminozitate
+
+number:
+  - platform: template
+    id: prag_tensiune_baterie
+    name: "Prag Tensiune Baterie"
+    icon: "mdi:battery-charging-60"
+    min_value: 40
+    max_value: 60
+    step: 0.5
+    unit_of_measurement: "V"
+    optimistic: true
+    restore_value: true
+    initial_value: 55
+
+  - platform: template
+    id: prag_luminozitate
+    name: "Prag Luminozitate"
+    icon: "mdi:brightness-6"
+    min_value: 3000
+    max_value: 5500
+    step: 100
+    unit_of_measurement: "lx"
+    optimistic: true
+    restore_value: true
+    initial_value: 4000
+
 binary_sensor:
   - platform: gpio
     id: input_pompa_panou
@@ -84,7 +120,53 @@ switch:
       number: GPIO15
       inverted: false
     name: "Releu Static"
-  
+
+  - platform: template
+    id: comutator_general_boiler
+    name: "Comutator general boiler"
+    icon: "mdi:water-boiler"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    turn_off_action:
+      - lambda: |-
+          if (id(boilerul_este_pornit)) {
+            id(opreste_boiler).execute();
+          }
+
+globals:
+  - id: boilerul_este_pornit
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+  - id: contor_tensiune_s
+    type: int
+    restore_value: false
+    initial_value: '0'
+  - id: contor_luminozitate_s
+    type: int
+    restore_value: false
+    initial_value: '0'
+  - id: ultima_tensiune_ms
+    type: uint32_t
+    restore_value: false
+    initial_value: '0'
+
+script:
+  - id: porneste_boiler
+    mode: single
+    then:
+      - globals.set:
+          id: boilerul_este_pornit
+          value: 'true'
+      - switch.turn_on: releu_static
+
+  - id: opreste_boiler
+    mode: single
+    then:
+      - globals.set:
+          id: boilerul_este_pornit
+          value: 'false'
+      - switch.turn_off: releu_static
 
 interval:
   - interval: 30s
@@ -103,4 +185,39 @@ interval:
           } else if (temp <= 35.0) {
             ESP_LOGD("ACM", "Temp <= 35 -> Releu OFF");
             id(releu_acm).turn_off();
+          }
+
+  - interval: 5s
+    then:
+      - lambda: |-
+          const int pas_s = 5;
+          float tensiune = id(ha_tensiune_baterie).state;
+          float luminozitate = id(ha_luminozitate).state;
+          float prag_tensiune = id(prag_tensiune_baterie).state;
+          float prag_lum = id(prag_luminozitate).state;
+
+          bool tensiune_recenta = (millis() - id(ultima_tensiune_ms)) < 60000;
+          bool tensiune_ok = !isnan(tensiune) && tensiune >= prag_tensiune && tensiune_recenta;
+          bool luminozitate_ok = !isnan(luminozitate) && luminozitate >= prag_lum;
+
+          if (tensiune_ok) {
+            id(contor_tensiune_s) += pas_s;
+          } else {
+            id(contor_tensiune_s) = 0;
+          }
+
+          if (luminozitate_ok) {
+            id(contor_luminozitate_s) += pas_s;
+          } else {
+            id(contor_luminozitate_s) = 0;
+          }
+
+          if ((!tensiune_ok || !luminozitate_ok) && id(boilerul_este_pornit)) {
+            id(opreste_boiler).execute();
+            return;
+          }
+
+          if (id(contor_tensiune_s) >= 300 && id(contor_luminozitate_s) >= 10 &&
+              !id(boilerul_este_pornit) && id(comutator_general_boiler).state) {
+            id(porneste_boiler).execute();
           }
