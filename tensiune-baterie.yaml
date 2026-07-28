@@ -1,0 +1,46 @@
+esphome:
+  name: tensiune-baterie
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "UuiUqfJQHd4PH5oNBgjDsGWBdR6z90XQMXGsVA/bHHk="
+
+ota:
+  - platform: esphome
+    password: "201ddfa8d2d681f76288947dc7300fbb"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_2
+      password: !secret wifi_password_nou
+
+# Divizor extern (baterie 48V, max. proiectat ~60V) intre borna + a bateriei si A0:
+#   R1 = 180k ohm (spre baterie+) , R2 = 10k ohm (spre GND, punct median -> A0)
+#   La 60V: tensiune pe A0 (header) ~= 3.16V, sub pragul de 3.2V al D1 mini.
+# multiply = (R1+R2)/R2 * 3.2 (raport intern D1 mini A0->ADC) = 19.0 * 3.2 = 60.8
+# Calibrare: verifica cu un multimetru la borne si ajusteaza multiply daca e nevoie.
+sensor:
+  - platform: adc
+    pin: A0
+    name: "Tensiune baterie"
+    unit_of_measurement: "V"
+    device_class: voltage
+    accuracy_decimals: 1
+    update_interval: 60s
+    filters:
+      - multiply: 60.8
