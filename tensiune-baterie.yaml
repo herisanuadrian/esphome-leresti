@@ -41,6 +41,6 @@ sensor:
     unit_of_measurement: "V"
     device_class: voltage
     accuracy_decimals: 1
-    update_interval: 60s
+    update_interval: 5s
     filters:
       - multiply: 60.8
