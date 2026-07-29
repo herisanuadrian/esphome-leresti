@@ -92,7 +92,7 @@ number:
     id: prag_luminozitate
     name: "Prag Luminozitate"
     icon: "mdi:brightness-6"
-    min_value: 3000
+    min_value: 2000
     max_value: 5500
     step: 100
     unit_of_measurement: "lx"
