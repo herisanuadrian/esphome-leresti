@@ -100,6 +100,18 @@ number:
     restore_value: true
     initial_value: 4000
 
+  - platform: template
+    id: prag_contor_tensiune_s
+    name: "Prag Contor Tensiune"
+    icon: "mdi:timer-outline"
+    min_value: 60
+    max_value: 300
+    step: 10
+    unit_of_measurement: "s"
+    optimistic: true
+    restore_value: true
+    initial_value: 300
+
 binary_sensor:
   - platform: gpio
     id: input_pompa_panou
@@ -227,7 +239,7 @@ interval:
             return;
           }
 
-          if (id(contor_tensiune_s) >= 300 && id(contor_luminozitate_s) >= 10 &&
+          if (id(contor_tensiune_s) >= id(prag_contor_tensiune_s).state && id(contor_luminozitate_s) >= 10 &&
               !id(boilerul_este_pornit) && id(comutator_general_boiler).state) {
             id(porneste_boiler).execute();
           }
