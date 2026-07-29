@@ -1,0 +1,41 @@
+esphome:
+  name: fotorezistor
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "RKa9GwfG/R31J5goWSCWE1klRUY2aCTNFjY0NvG5Z5Q="
+
+ota:
+  - platform: esphome
+    password: "ac3fd963f76efd4cd0ae3ceaa1318378"
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_nou
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_3
+      password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_ext_2
+      password: !secret wifi_password_nou
+
+# Fotorezistor intre 3.3V si A0 (divizor de tensiune, fara rezistenta fixa la GND
+# mentionata de utilizator - verifica daca circuitul are un al doilea rezistor spre GND;
+# fara el, A0 nu va varia corect intre extreme).
+sensor:
+  - platform: adc
+    pin: A0
+    name: "Fotorezistor"
+    unit_of_measurement: "V"
+    accuracy_decimals: 2
+    update_interval: 5s
