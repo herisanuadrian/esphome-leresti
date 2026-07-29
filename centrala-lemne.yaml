@@ -206,6 +206,10 @@ interval:
           bool tensiune_ok = !isnan(tensiune) && tensiune >= prag_tensiune && tensiune_recenta;
           bool luminozitate_ok = !isnan(luminozitate) && luminozitate >= prag_lum;
 
+          ESP_LOGD("RELEU_STATIC", "tensiune=%.2f prag_tensiune=%.2f tensiune_recenta=%d tensiune_ok=%d luminozitate=%.2f prag_lum=%.2f luminozitate_ok=%d contor_tensiune_s=%d contor_luminozitate_s=%d boilerul_este_pornit=%d",
+                   tensiune, prag_tensiune, tensiune_recenta, tensiune_ok, luminozitate, prag_lum, luminozitate_ok,
+                   id(contor_tensiune_s), id(contor_luminozitate_s), id(boilerul_este_pornit));
+
           if (tensiune_ok) {
             id(contor_tensiune_s) += pas_s;
           } else {
