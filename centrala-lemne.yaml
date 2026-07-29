@@ -66,7 +66,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_tensiune_baterie
-    entity_id: sensor.tensiune_baterie
+    entity_id: sensor.tensiune_baterie_tensiune_baterie
     on_value:
       - lambda: |-
           id(ultima_tensiune_ms) = millis();
