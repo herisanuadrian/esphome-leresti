@@ -75,6 +75,13 @@ sensor:
     id: ha_luminozitate
     entity_id: sensor.statie_meteo_luminozitate
 
+  - platform: homeassistant
+    id: ha_productie_solara
+    entity_id: sensor.gradina_fotorezistor_productie_solara
+    on_value:
+      - lambda: |-
+          id(ultima_productie_solara_ms) = millis();
+
 number:
   - platform: template
     id: prag_tensiune_baterie
@@ -92,13 +99,25 @@ number:
     id: prag_luminozitate
     name: "Prag Luminozitate"
     icon: "mdi:brightness-6"
-    min_value: 2000
+    min_value: 0
     max_value: 5500
     step: 100
     unit_of_measurement: "lx"
     optimistic: true
     restore_value: true
     initial_value: 4000
+
+  - platform: template
+    id: prag_productie_solara
+    name: "Prag Productie Solara"
+    icon: "mdi:solar-power"
+    min_value: 0.1
+    max_value: 3.3
+    step: 0.1
+    unit_of_measurement: "V"
+    optimistic: true
+    restore_value: true
+    initial_value: 1.65
 
   - platform: template
     id: prag_contor_tensiune_s
@@ -164,7 +183,15 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
+  - id: contor_productie_solara_s
+    type: int
+    restore_value: false
+    initial_value: '0'
   - id: ultima_tensiune_ms
+    type: uint32_t
+    restore_value: false
+    initial_value: '0'
+  - id: ultima_productie_solara_ms
     type: uint32_t
     restore_value: false
     initial_value: '0'
@@ -211,16 +238,21 @@ interval:
           const int pas_s = 5;
           float tensiune = id(ha_tensiune_baterie).state;
           float luminozitate = id(ha_luminozitate).state;
+          float productie_solara = id(ha_productie_solara).state;
           float prag_tensiune = id(prag_tensiune_baterie).state;
           float prag_lum = id(prag_luminozitate).state;
+          float prag_prod = id(prag_productie_solara).state;
 
           bool tensiune_recenta = (millis() - id(ultima_tensiune_ms)) < 60000;
           bool tensiune_ok = !isnan(tensiune) && tensiune >= prag_tensiune && tensiune_recenta;
           bool luminozitate_ok = !isnan(luminozitate) && luminozitate >= prag_lum;
+          bool productie_solara_recenta = (millis() - id(ultima_productie_solara_ms)) < 60000;
+          bool productie_solara_ok = !isnan(productie_solara) && productie_solara >= prag_prod && productie_solara_recenta;
 
-          ESP_LOGD("RELEU_STATIC", "tensiune=%.2f prag_tensiune=%.2f tensiune_recenta=%d tensiune_ok=%d luminozitate=%.2f prag_lum=%.2f luminozitate_ok=%d contor_tensiune_s=%d contor_luminozitate_s=%d boilerul_este_pornit=%d",
+          ESP_LOGD("RELEU_STATIC", "tensiune=%.2f prag_tensiune=%.2f tensiune_recenta=%d tensiune_ok=%d luminozitate=%.2f prag_lum=%.2f luminozitate_ok=%d productie_solara=%.2f prag_prod=%.2f productie_solara_recenta=%d productie_solara_ok=%d contor_tensiune_s=%d contor_luminozitate_s=%d contor_productie_solara_s=%d boilerul_este_pornit=%d",
                    tensiune, prag_tensiune, tensiune_recenta, tensiune_ok, luminozitate, prag_lum, luminozitate_ok,
-                   id(contor_tensiune_s), id(contor_luminozitate_s), id(boilerul_este_pornit));
+                   productie_solara, prag_prod, productie_solara_recenta, productie_solara_ok,
+                   id(contor_tensiune_s), id(contor_luminozitate_s), id(contor_productie_solara_s), id(boilerul_este_pornit));
 
           if (tensiune_ok) {
             id(contor_tensiune_s) += pas_s;
@@ -234,12 +266,19 @@ interval:
             id(contor_luminozitate_s) = 0;
           }
 
-          if ((!tensiune_ok || !luminozitate_ok) && id(boilerul_este_pornit)) {
+          if (productie_solara_ok) {
+            id(contor_productie_solara_s) += pas_s;
+          } else {
+            id(contor_productie_solara_s) = 0;
+          }
+
+          if ((!tensiune_ok || !luminozitate_ok || !productie_solara_ok) && id(boilerul_este_pornit)) {
             id(opreste_boiler).execute();
             return;
           }
 
           if (id(contor_tensiune_s) >= id(prag_contor_tensiune_s).state && id(contor_luminozitate_s) >= 10 &&
+              id(contor_productie_solara_s) >= 10 &&
               !id(boilerul_este_pornit) && id(comutator_general_boiler).state) {
             id(porneste_boiler).execute();
           }
