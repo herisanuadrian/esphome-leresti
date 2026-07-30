@@ -247,7 +247,7 @@ interval:
           bool tensiune_ok = !isnan(tensiune) && tensiune >= prag_tensiune && tensiune_recenta;
           bool luminozitate_ok = !isnan(luminozitate) && luminozitate >= prag_lum;
           bool productie_solara_recenta = (millis() - id(ultima_productie_solara_ms)) < 60000;
-          bool productie_solara_ok = !isnan(productie_solara) && productie_solara >= prag_prod && productie_solara_recenta;
+          bool productie_solara_ok = !isnan(productie_solara) && productie_solara >= prag_prod; // && productie_solara_recenta; // dezactivat: valoare plafonata la 1V -> HA nu mai trimite update-uri
 
           ESP_LOGD("RELEU_STATIC", "tensiune=%.2f prag_tensiune=%.2f tensiune_recenta=%d tensiune_ok=%d luminozitate=%.2f prag_lum=%.2f luminozitate_ok=%d productie_solara=%.2f prag_prod=%.2f productie_solara_recenta=%d productie_solara_ok=%d contor_tensiune_s=%d contor_luminozitate_s=%d contor_productie_solara_s=%d boilerul_este_pornit=%d",
                    tensiune, prag_tensiune, tensiune_recenta, tensiune_ok, luminozitate, prag_lum, luminozitate_ok,
