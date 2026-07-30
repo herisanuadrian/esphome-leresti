@@ -30,7 +30,7 @@ wifi:
       password: !secret wifi_password_nou
 
 # Celula solara 53x30mm intre A0 (pozitiv) si GND (negativ), cu rezistor de
-# sarcina 100 ohm in paralel pe celula. A0 citeste tensiunea peste rezistor.
+# sarcina 69 ohm in paralel pe celula. A0 citeste tensiunea peste rezistor.
 sensor:
   - platform: adc
     pin: A0
@@ -46,10 +46,13 @@ sensor:
 
   - platform: template
     name: "Iradiere solara"
-    unit_of_measurement: "W/m²"
+    unit_of_measurement: "W"
     accuracy_decimals: 1
     update_interval: 5s
     lambda: |-
       float v = id(productie_solara).state;
-      float putere_w = (v * v) / 100.0;      // P = V^2 / R, R=100 ohm
-      return putere_w / 0.00159;              // / arie celulei (0.053 x 0.03 m)
+      // Calibrare pe punct real: la 0.78V, productia solara reala este 2770W.
+      // Model P ~ V^2 (relatie patratica, R se anuleaza in constanta calibrata).
+      const float v_cal = 0.78;
+      const float p_cal = 2770.0;
+      return (v * v) * (p_cal / (v_cal * v_cal));
