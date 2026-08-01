@@ -64,6 +64,11 @@ sensor:
     id: temperatura_centrala_lemne
     name: "Temp. Centrala Lemne"
 
+  - platform: dallas_temp
+    address: 0x45000000822bef28
+    id: temperatura_boiler_sus
+    name: "Temp. Boiler Sus"
+
   - platform: homeassistant
     id: ha_tensiune_baterie
     entity_id: sensor.tensiune_baterie_tensiune_baterie
@@ -217,7 +222,7 @@ interval:
   - interval: 30s
     then:
       - lambda: |-
-          float temp = id(temperatura_boiler).state;
+          float temp = id(temperatura_boiler_sus).state;
           ESP_LOGD("ACM", "Temp Boiler=%.1f, Releu ACM=%d", temp, id(releu_acm).state);
           if (isnan(temp) || temp > 120.0 || temp < -10.0) {
             ESP_LOGD("ACM", "Temperatura invalida -> Releu OFF");
