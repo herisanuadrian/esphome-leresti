@@ -2,4 +2,4 @@
 # EXPOSES: (nothing — platform configuration)
 
 logger:
-  level: DEBUG
+  level: INFO
