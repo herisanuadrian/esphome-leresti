@@ -50,5 +50,6 @@ packages:
   hardware/pa_enable: !include esp32-voice/packages/hardware/pa_enable.yaml
   audio/microphone: !include esp32-voice/packages/audio/microphone.yaml
   audio/speaker: !include esp32-voice/packages/audio/speaker.yaml
+  audio/media_player: !include esp32-voice/packages/audio/media_player.yaml
   voice/wake_word: !include esp32-voice/packages/voice/wake_word.yaml
   voice/assistant: !include esp32-voice/packages/voice/assistant.yaml

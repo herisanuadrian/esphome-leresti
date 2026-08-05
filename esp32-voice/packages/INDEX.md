@@ -3,8 +3,9 @@
 
 ## audio
 NOTES: esp32-voice/packages/audio/NOTES.md
+- `media_player.yaml` — media_player.external_media_player (id, HA entity "esp_speaker")
 - `microphone.yaml` — microphone.mic_es8311 (id, consumed by voice/wake_word.yaml and voice/assistant.yaml)
-- `speaker.yaml` — speaker.spk_es8311 (id, consumed by voice/assistant.yaml)
+- `speaker.yaml` — speaker.spk_es8311 (id, consumed by voice/assistant.yaml and audio/media_player.yaml)
 
 ## hardware
 NOTES: esp32-voice/packages/hardware/NOTES.md

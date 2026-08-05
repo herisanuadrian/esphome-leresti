@@ -13,10 +13,14 @@ no separate `on_tts_start`/`on_tts_end` hooks were added, to keep this minimal.
 lambda variable.
 
 **assistant.yaml** — `voice_assistant:`, `id: va`. Uses `speaker:` (not `media_player:`
-— these are mutually exclusive in the component schema, and `media_player`/XMOS-style
-wrapping is out of scope for this board). Re-arms `micro_wake_word` via
-`micro_wake_word.start`/`.stop` on `on_client_connected`/`on_client_disconnected`/
-`on_end`/`on_error`.
+— these are mutually exclusive as `voice_assistant:`'s own audio-output key). Re-arms
+`micro_wake_word` via `micro_wake_word.start`/`.stop` on `on_client_connected`/
+`on_client_disconnected`/`on_end`/`on_error`.
+
+Note: a separate, standalone `media_player` entity exists in
+`audio/media_player.yaml` (HA entity `esp_speaker`) for announcements — it wraps
+`spk_es8311` directly and is unrelated to `voice_assistant:`'s own `speaker:` key
+above.
 
 ## Cross-file id coupling
 

@@ -13,12 +13,20 @@ schema-valid — see top-level `NOTES.md`.
 references `hardware/codec.yaml`'s `es8311_dac` via `audio_dac:` for volume/mute
 passthrough. `sample_rate: 16000` matches the codec's own `sample_rate`.
 
+**media_player.yaml** — `id: external_media_player`, `platform: speaker`, HA entity
+`esp_speaker`. Wraps `spk_es8311` via `announcement_pipeline:` for a standalone
+announcement/media entity. Independent of `voice/assistant.yaml`'s `voice_assistant:`,
+which still feeds `spk_es8311` directly via its own `speaker:` key — see
+`voice/NOTES.md`.
+
 ## Exposes
 
 - `microphone.mic_es8311` — consumed by `voice/wake_word.yaml`, `voice/assistant.yaml`.
-- `speaker.spk_es8311` — consumed by `voice/assistant.yaml`.
+- `speaker.spk_es8311` — consumed by `voice/assistant.yaml`, `audio/media_player.yaml`.
+- `media_player.external_media_player` — HA entity `esp_speaker`.
 
 ## Dependencies
 
-Both depend on `hardware/i2s_bus.yaml`'s `i2s_bus_audio` hub. `speaker.yaml` also
-depends on `hardware/codec.yaml`'s `es8311_dac`.
+`microphone.yaml` and `speaker.yaml` depend on `hardware/i2s_bus.yaml`'s
+`i2s_bus_audio` hub. `speaker.yaml` also depends on `hardware/codec.yaml`'s
+`es8311_dac`. `media_player.yaml` depends on `speaker.yaml`'s `spk_es8311`.

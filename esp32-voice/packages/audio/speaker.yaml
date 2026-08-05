@@ -1,5 +1,5 @@
 # DEPENDS ON: hardware/i2s_bus.yaml (i2s_bus_audio), hardware/codec.yaml (es8311_dac), ${pin_i2s_dout} (substitution)
-# EXPOSES: speaker.spk_es8311 (id, consumed by voice/assistant.yaml)
+# EXPOSES: speaker.spk_es8311 (id, consumed by voice/assistant.yaml and audio/media_player.yaml)
 
 # sample_rate matches hardware/codec.yaml's es8311_dac sample_rate.
 speaker:
