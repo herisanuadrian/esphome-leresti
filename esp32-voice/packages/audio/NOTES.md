@@ -1,32 +1,30 @@
 # Audio — Overview
 
-Microphone capture and speaker playback components, both `platform: i2s_audio`.
+Microphone capture and speaker playback components, both `platform: i2s_audio`,
+each on its own dedicated I2S bus (see `hardware/i2s_bus.yaml`).
 
 ## Files
 
-**microphone.yaml** — `id: mic_es8311`, `adc_type: external`, `i2s_mode: secondary`
-(shares the I2S bus with the speaker — see `hardware/i2s_bus.yaml`). `channel: left`
-and the primary/secondary assignment are unconfirmed hardware-behavior guesses, both
-schema-valid — see top-level `NOTES.md`.
+**microphone.yaml** — `id: va_mic`, INMP441 (`adc_type: external`, `channel: left`),
+on the `i2s_mic` bus.
 
-**speaker.yaml** — `id: spk_es8311`, `dac_type: external`, `i2s_mode: primary`,
-references `hardware/codec.yaml`'s `es8311_dac` via `audio_dac:` for volume/mute
-passthrough. `sample_rate: 16000` matches the codec's own `sample_rate`.
+**speaker.yaml** — `id: va_speaker`, MAX98357A (`dac_type: external`,
+`i2s_mode: primary`), on the `i2s_spk` bus. No `audio_dac:` reference — unlike the
+previous ES8311 board, this amp has no separate codec component for volume/mute.
 
 **media_player.yaml** — `id: external_media_player`, `platform: speaker`, HA entity
-`esp_speaker`. Wraps `spk_es8311` via `announcement_pipeline:` for a standalone
-announcement/media entity. Independent of `voice/assistant.yaml`'s `voice_assistant:`,
-which still feeds `spk_es8311` directly via its own `speaker:` key — see
-`voice/NOTES.md`.
+`esp_speaker`. Wraps `va_speaker` via `announcement_pipeline:` for a standalone
+announcement/media entity, independent of `voice/assistant.yaml`'s `voice_assistant:`,
+which feeds `va_speaker` directly via its own `speaker:` key.
 
 ## Exposes
 
-- `microphone.mic_es8311` — consumed by `voice/wake_word.yaml`, `voice/assistant.yaml`.
-- `speaker.spk_es8311` — consumed by `voice/assistant.yaml`, `audio/media_player.yaml`.
+- `microphone.va_mic` — consumed by `voice/assistant.yaml`.
+- `speaker.va_speaker` — consumed by `voice/assistant.yaml`, `audio/media_player.yaml`.
 - `media_player.external_media_player` — HA entity `esp_speaker`.
 
 ## Dependencies
 
-`microphone.yaml` and `speaker.yaml` depend on `hardware/i2s_bus.yaml`'s
-`i2s_bus_audio` hub. `speaker.yaml` also depends on `hardware/codec.yaml`'s
-`es8311_dac`. `media_player.yaml` depends on `speaker.yaml`'s `spk_es8311`.
+`microphone.yaml` depends on `hardware/i2s_bus.yaml`'s `i2s_mic`. `speaker.yaml`
+depends on `hardware/i2s_bus.yaml`'s `i2s_spk`. `media_player.yaml` depends on
+`speaker.yaml`'s `va_speaker`.

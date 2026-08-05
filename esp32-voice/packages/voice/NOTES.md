@@ -4,35 +4,39 @@ On-device wake word detection and the Home Assistant voice-assistant pipeline.
 
 ## Files
 
-**wake_word.yaml** — `micro_wake_word:`, `id: mww`, single model (`okay_nabu`), plus
-the default `vad:` model. `stop_after_detection: true` is the chosen mechanism for
-avoiding wake-word false-triggers during TTS playback (see top-level `NOTES.md`'s
-"No AEC/beamforming coprocessor" section) — this is the ONLY gating mechanism used;
-no separate `on_tts_start`/`on_tts_end` hooks were added, to keep this minimal.
-`on_wake_word_detected` calls `voice_assistant.start` with the detected `wake_word`
-lambda variable.
+**wake_word.yaml** — `micro_wake_word:`, no `id:` (single instance, matches the
+known-working flat config this was split from). Single model (`hey_jarvis`), no
+`vad:` or `stop_after_detection:` (see top-level `NOTES.md`'s "No AEC/beamforming
+coprocessor" section — carried over as-is, not added during the packages split).
+`on_wake_word_detected` waits 300ms then calls `voice_assistant.start` (no explicit
+wake_word lambda, unlike the previous board's config).
 
-**assistant.yaml** — `voice_assistant:`, `id: va`. Uses `speaker:` (not `media_player:`
-— these are mutually exclusive as `voice_assistant:`'s own audio-output key). Re-arms
-`micro_wake_word` via `micro_wake_word.start`/`.stop` on `on_client_connected`/
-`on_client_disconnected`/`on_end`/`on_error`.
+**assistant.yaml** — `voice_assistant:`, `id: va`. Uses `speaker:` (not
+`media_player:`). Re-arms `micro_wake_word` via `micro_wake_word.start` on `on_end`
+and `on_error` only (no `on_client_connected`/`on_client_disconnected` hooks, unlike
+the previous board's config) — initial arming instead happens once via
+`esp32-voice.yaml`'s top-level `on_boot:` (priority -100, after a boot delay and
+`wait_until: api.connected`).
 
 Note: a separate, standalone `media_player` entity exists in
 `audio/media_player.yaml` (HA entity `esp_speaker`) for announcements — it wraps
-`spk_es8311` directly and is unrelated to `voice_assistant:`'s own `speaker:` key
-above.
+`va_speaker` directly and is unrelated to `voice_assistant:`'s own `speaker:` key.
 
 ## Cross-file id coupling
 
 **wake_word.yaml → assistant.yaml**: `on_wake_word_detected` calls
 `voice_assistant.start` (targets the `va` id implicitly — only one `voice_assistant:`
-instance exists, so no explicit id needed in the action).
+instance exists).
 
-**assistant.yaml → wake_word.yaml**: `micro_wake_word: mww` key, plus 4 automations
-(`micro_wake_word.start`/`.stop: { id: mww }`).
+**assistant.yaml → wake_word.yaml**: `on_end`/`on_error` call `micro_wake_word.start`
+(targets the single `micro_wake_word:` instance implicitly — it has no id).
 
-Before renaming `mww` or `va`, grep both files — the coupling is bidirectional and not
-visible from either file in isolation.
+**esp32-voice.yaml → wake_word.yaml**: top-level `on_boot:` (priority -100) also
+calls `micro_wake_word.start` once, after boot + API connect.
+
+Before adding an `id:` to either `micro_wake_word:` or `voice_assistant:`, grep all
+three call sites above — the coupling relies on there being exactly one instance of
+each.
 
 ## Exposes
 
@@ -41,5 +45,5 @@ device register as an HA Assist satellite automatically.
 
 ## Dependencies
 
-Both depend on `audio/microphone.yaml`'s `mic_es8311`; `assistant.yaml` also depends on
-`audio/speaker.yaml`'s `spk_es8311`.
+Both depend on `audio/microphone.yaml`'s `va_mic`; `assistant.yaml` also depends on
+`audio/speaker.yaml`'s `va_speaker`.

@@ -3,4 +3,4 @@
 
 api:
   encryption:
-    key: "xK0XDzI4vnJlrLH0HFat/XlXP9iCqb85j+uARxA9zrs="
+    key: !secret api_key

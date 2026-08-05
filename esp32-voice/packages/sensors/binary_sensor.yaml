@@ -1,0 +1,45 @@
+# DEPENDS ON: (nothing)
+# EXPOSES: binary_sensor.VA_Online, binary_sensor.vol_down (id, "Volume Down"), binary_sensor.vol_up (id, "Volume Up"), binary_sensor.wifi_btn (id, "WiFi Button"), binary_sensor.pir_motion (id, "Motion")
+
+binary_sensor:
+  - platform: status
+    name: "VA Online"
+
+  # Volume Down button - wire HA automation for volume control
+  - platform: gpio
+    pin:
+      number: GPIO39
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Volume Down"
+    id: vol_down
+
+  # Volume Up button - wire HA automation for volume control
+  - platform: gpio
+    pin:
+      number: GPIO40
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Volume Up"
+    id: vol_up
+
+  # WiFi button - fully repurposable via HA automation
+  # Original Xiaozhi firmware used this for WiFi provisioning
+  - platform: gpio
+    pin:
+      number: GPIO1
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "WiFi Button"
+    id: wifi_btn
+
+  # PIR Motion Sensor - HC-SR501 compatible
+  # Header pinout: GND, OUT, VCC (left to right)
+  # Allow 30-60 seconds after boot for warm up
+  - platform: gpio
+    pin:
+      number: GPIO8
+      mode: INPUT
+    name: "Motion"
+    id: pir_motion
+    device_class: motion

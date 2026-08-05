@@ -5,9 +5,9 @@ firmware update mechanism.
 
 ## Files
 
-**wifi.yaml** — 3 WiFi networks, reusing the same shared `!secret` credentials as
-`esp32-monitor` (`wifi_ssid_ext`/`wifi_password`/`wifi_ssid_nou`/`wifi_password_nou`/
-`wifi_ssid_ext_nou`).
+**wifi.yaml** — single WiFi network via shared `!secret` credentials
+(`wifi_ssid_nou`/`wifi_password_nou`), `fast_connect: true`, `power_save_mode: none`,
+plus a fallback AP (`ap_password` secret) and `captive_portal:`.
 
 **api.yaml** — ESPHome Native API. No custom `services:` — this device registers as a
 Home Assistant Assist voice satellite automatically once `api:` + `voice_assistant:`

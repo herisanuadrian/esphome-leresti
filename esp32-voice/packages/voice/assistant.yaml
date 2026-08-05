@@ -1,23 +1,24 @@
-# DEPENDS ON: audio/microphone.yaml (mic_es8311), audio/speaker.yaml (spk_es8311), voice/wake_word.yaml (mww)
+# DEPENDS ON: audio/microphone.yaml (va_mic), audio/speaker.yaml (va_speaker), voice/wake_word.yaml (micro_wake_word.start)
 # EXPOSES: (nothing named — HA Assist voice satellite, auto-registered via api: + voice_assistant:)
 
 voice_assistant:
   id: va
-  microphone:
-    microphone: mic_es8311
-    channels: [0]
-  speaker: spk_es8311
-  micro_wake_word: mww
-  use_wake_word: false
+  microphone: va_mic
+  speaker: va_speaker
   noise_suppression_level: 0
-  auto_gain: 0dBFS
-  conversation_timeout: 300s
-  volume_multiplier: 1.0
-  on_client_connected:
-    - micro_wake_word.start: { id: mww }
-  on_client_disconnected:
-    - micro_wake_word.stop: { id: mww }
+  auto_gain: 31dBFS
+  volume_multiplier: 4.0
+  on_start:
+    - logger.log: "VA started - listening"
   on_end:
-    - micro_wake_word.start: { id: mww }
+    - delay: 1s
+    - micro_wake_word.start:
   on_error:
-    - micro_wake_word.start: { id: mww }
+    - lambda: |-
+        if (code.size()) {
+          ESP_LOGD("va", "VA error: %s", code.c_str());
+        } else {
+          ESP_LOGD("va", "VA error: <empty>");
+        }
+    - delay: 10s
+    - micro_wake_word.start:

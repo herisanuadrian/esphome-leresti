@@ -1,60 +1,50 @@
 # esp32-voice — Top-Level Notes
 
-Xiaozhi ESP32-S3 Audio module (1.54" LCD board), voice-assistant scope only.
-Package split follows the `esp32-monitor` pattern from day one — read
+303ESP32S3-AI v2.3 board (INMP441 mic + MAX98357A amp), voice-assistant scope.
+Package split follows the `esp32-monitor` pattern — read
 `esp32-voice/packages/INDEX.md` first for orientation.
+
+## Board history
+
+This device previously ran on a different, ES8311-codec-based board (I2C control
+bus, shared I2S bus between mic/speaker, `okay_nabu` wake word). That board was
+replaced (2026-08-06) with the current 303ESP32S3-AI hardware — a known-working
+flat config was split into this package layout. The full board reference (GPIO
+map, chip/FCC/board IDs) lives in the header comment of `esp32-voice.yaml`.
 
 ## Scope
 
-This config covers ONLY: mic capture, speaker playback, on-device wake word
-(`micro_wake_word`), and the HA `voice_assistant` pipeline. Display, battery,
-buttons, and LEDs are explicitly deferred — do not add them without a new task.
-
-## Hardware — confirmed pins
-
-Confirmed by two independent sources (hardware teardown + upstream `78/xiaozhi-esp32`
-PR #1930 `config.h` for this exact board). See `substitutions:` in `esp32-voice.yaml`.
-GPIO0 (BOOT button), GPIO11/12 (4G add-on), GPIO19/20 (native USB) are reserved/unused
-in this scope.
+Mic capture, speaker playback, on-device wake word (`micro_wake_word`, `hey_jarvis`
+model), the HA `voice_assistant` pipeline, a standalone announcement `media_player`,
+plus buttons (Vol Up/Down, WiFi), a PIR motion sensor, and diagnostic
+sensors/reset-reason reporting. No display present on this board variant.
 
 ## No AEC/beamforming coprocessor
 
 Unlike Home Assistant's Voice PE (XMOS chip), this board has no hardware echo
-cancellation. Wake word may false-trigger or fail to detect while the speaker is
-playing. Gated via `micro_wake_word`'s `stop_after_detection: true` (halts wake-word
-evaluation for the full duration of a `voice_assistant` pipeline run, including TTS
-playback) — see `packages/voice/wake_word.yaml` and `packages/voice/NOTES.md`.
-
-## Open hardware-verification items (schema-valid, not yet compile/flash-verified)
-
-- `hardware/pa_enable.yaml` — PA enable polarity (active-high assumed).
-- `esp32-voice.yaml`'s `psram:` — octal vs quad PSRAM chip (assumed octal).
-- `audio/microphone.yaml` — mic `channel:` (left vs right).
-- `audio/microphone.yaml` / `audio/speaker.yaml` — which side of the shared I2S bus
-  should be `i2s_mode: secondary` vs `primary` (mic is currently secondary).
-
-None of these are caught by `./validate.sh` (schema-only). User-run `esphome compile`
-succeeded (2026-08-05) — build is clean aside from one harmless upstream `-Wshadow`
-warning inside the `espressif__esp-tflite-micro` managed component (pulled in by
-`micro_wake_word` for ML inference kernels; not this repo's code, nothing to fix here).
-A successful compile does NOT confirm hardware behavior — the 4 items above still need
-a real flash + listen/speak test on the physical board.
+cancellation. Note: unlike the previous board's config, this one does **not** set
+`stop_after_detection` or an explicit `vad:` on `micro_wake_word` — carried over
+as-is from the known-working flat config; not changed as part of the packages
+split. If wake word false-triggers during TTS playback, that gating is the first
+thing to revisit.
 
 ## Cross-file id coupling
 
-`voice/wake_word.yaml` and `voice/assistant.yaml` reference each other's ids
-(`mww` calls `voice_assistant.start`; `assistant.yaml` references `mww` in its own
-`micro_wake_word:` key and re-arms it via `micro_wake_word.start`/`.stop`). See
-`packages/voice/NOTES.md`.
+`esp32-voice.yaml`'s top-level `on_boot:` (priority 600) publishes to
+`text_sensor.reset_reason`, defined in `packages/sensors/sensor.yaml` — and its
+`on_boot:` (priority -100) and `packages/voice/assistant.yaml`'s `on_end`/`on_error`
+all call `micro_wake_word.start` (single instance, no id, defined in
+`packages/voice/wake_word.yaml`), which itself calls `voice_assistant.start`
+(single instance, id `va`, defined in `packages/voice/assistant.yaml`).
 
 ## Literal (non-`!secret`) credentials — never touch the values
 
 `network/api.yaml`'s `encryption.key` and `network/ota.yaml`'s `password` are literal
-strings, hardcoded at the operator's explicit request (2026-08-05), matching the
-pre-existing `esp32-monitor` convention. WiFi reuses the existing shared `!secret`
-credentials.
+strings, matching the pre-existing `esp32-monitor` convention. WiFi uses the shared
+`!secret` credentials (`wifi_ssid_nou`/`wifi_password_nou`/`ap_password`).
 
 ## No MANUAL.md
 
-No on-device control surface yet (no display/buttons/LEDs in scope) — nothing to
-document for an end user beyond this NOTES.md. Revisit once those land.
+Buttons/PIR exist but have no HA automations wired from this config yet (volume
+buttons and WiFi button are exposed as `binary_sensor`s only) — revisit once
+automations land.

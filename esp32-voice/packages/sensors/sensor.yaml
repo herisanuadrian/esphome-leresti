@@ -1,0 +1,17 @@
+# DEPENDS ON: (nothing)
+# EXPOSES: sensor.VA_Uptime, sensor.VA_WiFi_RSSI, sensor.VA_Temperature (HA-facing, diagnostic); text_sensor.reset_reason (id, HA entity "VA Reset Reason", published by esp32-voice.yaml's on_boot lambda)
+
+sensor:
+  - platform: uptime
+    name: "VA Uptime"
+  - platform: wifi_signal
+    name: "VA WiFi RSSI"
+    update_interval: 60s
+  - platform: internal_temperature
+    name: "VA Temperature"
+
+text_sensor:
+  - platform: template
+    name: "VA Reset Reason"
+    id: reset_reason
+    icon: "mdi:restart"

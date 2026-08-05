@@ -2,4 +2,5 @@
 # EXPOSES: (nothing — platform configuration)
 
 logger:
+  hardware_uart: UART0
   level: INFO

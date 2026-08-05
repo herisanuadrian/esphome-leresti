@@ -1,53 +1,107 @@
-substitutions:
-  # ─── I2S bus (shared, ES8311 codec) ────────────────────────────
-  pin_i2s_dout:  "1"   # I2S DOUT — codec/speaker data out
-  pin_i2s_lrck:  "2"   # I2S LRCK / WS
-  pin_i2s_din:   "3"   # I2S DIN — mic data in
-  pin_i2s_bclk:  "4"   # I2S BCLK
-  pin_i2s_mclk:  "5"   # I2S MCLK
-  # ─── I2C (ES8311 control) ───────────────────────────────────────
-  pin_i2c_scl:   "6"
-  pin_i2c_sda:   "7"
-  # ─── Amplifier ──────────────────────────────────────────────────
-  pin_pa_enable: "8"   # PA / speaker-amp enable
-  # NOTE: GPIO0 is the BOOT button — reserved, not used in this scope.
-  # GPIO11/12 reserved for optional 4G add-on; GPIO19/20 are native USB D-/D+.
+# ============================================================
+# Board: 303ESP32S3-AI v2.3
+# Silkscreen: esp32s3-ai_v2.3 / 303esp32ai2 / 5437314r_p759_251206
+# Original Firmware SKU: bread-compact-wifi (Xiaozhi AI v2.0.3)
+# Chip: ESP32-S3-WROOM-1 N16R8 (16MB Flash, 8MB Octal PSRAM)
+# USB: CH340X (onboard, one-key flash, no manual reset needed)
+# Battery: TP5400 management chip (PH2.0 connector)
+# Speaker: PH2.0 connector
+# FCC ID: 2bb77-esps3-32
+# Board Size: 39x45.5mm
+#
+# CONFIRMED GPIO ASSIGNMENTS:
+# -------------------------------------------------------
+# INMP441 Microphone (I2S):
+#   WS   = GPIO4
+#   SCK  = GPIO5
+#   SD   = GPIO6
+#
+# MAX98357A Amplifier (I2S):
+#   BCLK = GPIO15
+#   LRC  = GPIO16
+#   DIN  = GPIO7
+#
+# Buttons:
+#   Vol Down = GPIO39 (INPUT_PULLUP, inverted)
+#   Vol Up   = GPIO40 (INPUT_PULLUP, inverted)
+#   WiFi     = GPIO1  (INPUT_PULLUP, inverted, fully repurposable via HA)
+#   BOOT     = Hardware flash pin (not GPIO controllable)
+#   EN       = Hardware reset pin (not GPIO controllable)
+#
+# PIR Header (GND, OUT, VCC):
+#   OUT = GPIO8 (confirmed, HC-SR501 compatible)
+#
+# LEDs:
+#   4x Blue  = TP5400 battery indicator (hardware controlled, not ESP32)
+#   2x Red   = GPIO not found after exhaustive scan (likely hardwired)
+#   1x Green = GPIO not found after exhaustive scan (likely power indicator)
+#
+# PSRAM: 8MB Octal @ 80MHz (mode: octal required for N16R8)
+# Flash: 16MB QIO mode (CONFIG_ESPTOOLPY_FLASHMODE_QIO required)
+#
+# NOTES:
+#   - SSD1306 OLED display NOT physically present on this board variant
+#   - TP5400 blue charge LEDs cannot be controlled via software
+#   - Red/Green LEDs not found after exhaustive GPIO scan
+#   - Binary firmware extracted and analyzed to confirm pin assignments
+#   - Original Xiaozhi firmware speaks Chinese, hardware confirmed working
+#   - GitHub: https://github.com/immortalbob/303ESP32S3-AI-ESPHome
+# ============================================================
 
 esphome:
   name: esp32-voice
   friendly_name: esp32-voice
+  on_boot:
+    - priority: 600
+      then:
+        - text_sensor.template.publish:
+            id: reset_reason
+            state: !lambda |-
+              auto reason = esp_reset_reason();
+              switch(reason) {
+                case ESP_RST_POWERON: return std::string("Power On");
+                case ESP_RST_SW: return std::string("Software Reset");
+                case ESP_RST_PANIC: return std::string("Panic/Crash");
+                case ESP_RST_INT_WDT: return std::string("Interrupt Watchdog");
+                case ESP_RST_TASK_WDT: return std::string("Task Watchdog");
+                case ESP_RST_WDT: return std::string("Watchdog");
+                case ESP_RST_DEEPSLEEP: return std::string("Deep Sleep");
+                case ESP_RST_BROWNOUT: return std::string("Brownout");
+                default: return std::string("Unknown");
+              }
+    - priority: -100
+      then:
+        - delay: 5s
+        - wait_until:
+            api.connected:
+        - delay: 1s
+        - micro_wake_word.start:
 
 esp32:
   board: esp32-s3-devkitc-1
-  cpu_frequency: 240MHz
   variant: esp32s3
   flash_size: 16MB
   framework:
     type: esp-idf
-    version: recommended
     sdkconfig_options:
-      # Keeps micro_wake_word's rodata/instructions in PSRAM — speeds up inference.
-      CONFIG_SPIRAM_RODATA: "y"
-      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: "y"
+      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: "y"
+      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
+      CONFIG_SPIRAM_SPEED_80M: "y"
+      CONFIG_ESPTOOLPY_FLASHMODE_QIO: "y"
 
-# TODO verify: this board's PSRAM chip is octal/OPI (assumed from the 16MB
-# flash / 8MB PSRAM combo typical of ESP32-S3-WROOM-1-N16R8 modules) — not
-# confirmed by either hardware source for this exact board. If boot fails
-# with a PSRAM error, try mode: quad instead.
 psram:
   mode: octal
   speed: 80MHz
-  ignore_not_found: false
 
 packages:
   logging/logger: !include esp32-voice/packages/logging/logger.yaml
   network/wifi: !include esp32-voice/packages/network/wifi.yaml
   network/api: !include esp32-voice/packages/network/api.yaml
   network/ota: !include esp32-voice/packages/network/ota.yaml
-  hardware/i2c: !include esp32-voice/packages/hardware/i2c.yaml
   hardware/i2s_bus: !include esp32-voice/packages/hardware/i2s_bus.yaml
-  hardware/codec: !include esp32-voice/packages/hardware/codec.yaml
-  hardware/pa_enable: !include esp32-voice/packages/hardware/pa_enable.yaml
+  sensors/sensor: !include esp32-voice/packages/sensors/sensor.yaml
+  sensors/binary_sensor: !include esp32-voice/packages/sensors/binary_sensor.yaml
   audio/microphone: !include esp32-voice/packages/audio/microphone.yaml
   audio/speaker: !include esp32-voice/packages/audio/speaker.yaml
   audio/media_player: !include esp32-voice/packages/audio/media_player.yaml

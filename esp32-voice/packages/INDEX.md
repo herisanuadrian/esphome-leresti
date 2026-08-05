@@ -4,15 +4,12 @@
 ## audio
 NOTES: esp32-voice/packages/audio/NOTES.md
 - `media_player.yaml` — media_player.external_media_player (id, HA entity "esp_speaker")
-- `microphone.yaml` — microphone.mic_es8311 (id, consumed by voice/wake_word.yaml and voice/assistant.yaml)
-- `speaker.yaml` — speaker.spk_es8311 (id, consumed by voice/assistant.yaml and audio/media_player.yaml)
+- `microphone.yaml` — microphone.va_mic (id, consumed by voice/wake_word.yaml and voice/assistant.yaml)
+- `speaker.yaml` — speaker.va_speaker (id, consumed by voice/assistant.yaml and audio/media_player.yaml)
 
 ## hardware
 NOTES: esp32-voice/packages/hardware/NOTES.md
-- `codec.yaml` — audio_dac.es8311_dac (id, consumed by audio/speaker.yaml's audio_dac: key)
-- `i2c.yaml` — i2c.i2c_bus (id, consumed by hardware/codec.yaml)
-- `i2s_bus.yaml` — i2s_audio.i2s_bus_audio (id, consumed by audio/microphone.yaml and audio/speaker.yaml)
-- `pa_enable.yaml` — (nothing — internal-only, no HA entity)
+- `i2s_bus.yaml` — i2s_audio.i2s_mic (consumed by audio/microphone.yaml), i2s_audio.i2s_spk (consumed by audio/speaker.yaml)
 
 ## logging
 NOTES: esp32-voice/packages/logging/NOTES.md
@@ -24,7 +21,12 @@ NOTES: esp32-voice/packages/network/NOTES.md
 - `ota.yaml` — (nothing — platform configuration)
 - `wifi.yaml` — (nothing — platform configuration)
 
+## sensors
+NOTES: esp32-voice/packages/sensors/NOTES.md
+- `binary_sensor.yaml` — binary_sensor.VA_Online, binary_sensor.vol_down (id, "Volume Down"), binary_sensor.vol_up (id, "Volume Up"), binary_sensor.wifi_btn (id, "WiFi Button"), binary_sensor.pir_motion (id, "Motion")
+- `sensor.yaml` — sensor.VA_Uptime, sensor.VA_WiFi_RSSI, sensor.VA_Temperature (HA-facing, diagnostic); text_sensor.reset_reason (id, HA entity "VA Reset Reason", published by esp32-voice.yaml's on_boot lambda)
+
 ## voice
 NOTES: esp32-voice/packages/voice/NOTES.md
 - `assistant.yaml` — (nothing named — HA Assist voice satellite, auto-registered via api: + voice_assistant:)
-- `wake_word.yaml` — micro_wake_word.mww (id, consumed by voice/assistant.yaml)
+- `wake_word.yaml` — (nothing named — single micro_wake_word instance, no id)

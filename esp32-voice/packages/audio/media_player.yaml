@@ -1,14 +1,14 @@
-# DEPENDS ON: audio/speaker.yaml (spk_es8311)
+# DEPENDS ON: audio/speaker.yaml (va_speaker)
 # EXPOSES: media_player.external_media_player (id, HA entity "esp_speaker")
 
 # Standalone announcement/media entity, independent of voice/assistant.yaml's
-# voice_assistant: (which uses speaker: spk_es8311 directly, not this).
+# voice_assistant: (which uses speaker: va_speaker directly, not this).
 media_player:
   - platform: speaker
     name: "esp_speaker"
     id: external_media_player
     announcement_pipeline:
-      speaker: spk_es8311
+      speaker: va_speaker
       num_channels: 1
       format: WAV
       sample_rate: 16000
