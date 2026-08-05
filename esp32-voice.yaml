@@ -1,0 +1,54 @@
+substitutions:
+  # ─── I2S bus (shared, ES8311 codec) ────────────────────────────
+  pin_i2s_dout:  "1"   # I2S DOUT — codec/speaker data out
+  pin_i2s_lrck:  "2"   # I2S LRCK / WS
+  pin_i2s_din:   "3"   # I2S DIN — mic data in
+  pin_i2s_bclk:  "4"   # I2S BCLK
+  pin_i2s_mclk:  "5"   # I2S MCLK
+  # ─── I2C (ES8311 control) ───────────────────────────────────────
+  pin_i2c_scl:   "6"
+  pin_i2c_sda:   "7"
+  # ─── Amplifier ──────────────────────────────────────────────────
+  pin_pa_enable: "8"   # PA / speaker-amp enable
+  # NOTE: GPIO0 is the BOOT button — reserved, not used in this scope.
+  # GPIO11/12 reserved for optional 4G add-on; GPIO19/20 are native USB D-/D+.
+
+esphome:
+  name: esp32-voice
+  friendly_name: esp32-voice
+
+esp32:
+  board: esp32-s3-devkitc-1
+  cpu_frequency: 240MHz
+  variant: esp32s3
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    version: recommended
+    sdkconfig_options:
+      # Keeps micro_wake_word's rodata/instructions in PSRAM — speeds up inference.
+      CONFIG_SPIRAM_RODATA: "y"
+      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: "y"
+
+# TODO verify: this board's PSRAM chip is octal/OPI (assumed from the 16MB
+# flash / 8MB PSRAM combo typical of ESP32-S3-WROOM-1-N16R8 modules) — not
+# confirmed by either hardware source for this exact board. If boot fails
+# with a PSRAM error, try mode: quad instead.
+psram:
+  mode: octal
+  speed: 80MHz
+  ignore_not_found: false
+
+packages:
+  logging/logger: !include esp32-voice/packages/logging/logger.yaml
+  network/wifi: !include esp32-voice/packages/network/wifi.yaml
+  network/api: !include esp32-voice/packages/network/api.yaml
+  network/ota: !include esp32-voice/packages/network/ota.yaml
+  hardware/i2c: !include esp32-voice/packages/hardware/i2c.yaml
+  hardware/i2s_bus: !include esp32-voice/packages/hardware/i2s_bus.yaml
+  hardware/codec: !include esp32-voice/packages/hardware/codec.yaml
+  hardware/pa_enable: !include esp32-voice/packages/hardware/pa_enable.yaml
+  audio/microphone: !include esp32-voice/packages/audio/microphone.yaml
+  audio/speaker: !include esp32-voice/packages/audio/speaker.yaml
+  voice/wake_word: !include esp32-voice/packages/voice/wake_word.yaml
+  voice/assistant: !include esp32-voice/packages/voice/assistant.yaml

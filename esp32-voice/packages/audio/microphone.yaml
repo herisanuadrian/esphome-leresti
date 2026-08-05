@@ -1,0 +1,21 @@
+# DEPENDS ON: hardware/i2s_bus.yaml (i2s_bus_audio), ${pin_i2s_din} (substitution)
+# EXPOSES: microphone.mic_es8311 (id, consumed by voice/wake_word.yaml and voice/assistant.yaml)
+
+# TODO verify: mic channel placement (left vs right) — defaulted to left,
+# unconfirmed against the ES8311's actual channel mapping on this board.
+# TODO verify: i2s_mode — mic and speaker share one i2s_audio hub (see
+# hardware/i2s_bus.yaml), so only one side may configure the port as
+# `primary`; the other must be `secondary`. Both are schema-valid either
+# way (esphome config passes) — this is a hardware-behavior question, not
+# caught by validation. Placeholder: mic is secondary, speaker
+# (audio/speaker.yaml) is primary — confirm with a real compile + flash.
+microphone:
+  - platform: i2s_audio
+    id: mic_es8311
+    i2s_audio_id: i2s_bus_audio
+    adc_type: external
+    i2s_din_pin: ${pin_i2s_din}
+    channel: left
+    sample_rate: 16000
+    i2s_mode: secondary
+    pdm: false

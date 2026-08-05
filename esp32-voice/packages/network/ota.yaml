@@ -1,0 +1,6 @@
+# DEPENDS ON: ota_password_esp32_voice (secret)
+# EXPOSES: (nothing — platform configuration)
+
+ota:
+  - platform: esphome
+    password: !secret ota_password_esp32_voice

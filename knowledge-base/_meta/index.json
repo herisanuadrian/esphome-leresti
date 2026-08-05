@@ -15,6 +15,15 @@
     "source": "esphome/components/apds9960/ at ref 2026.7.2",
     "status": "ok"
   },
+  "audio_dac": {
+    "files": [
+      "audio_dac.h",
+      "automation.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/audio_dac/ at ref 2026.7.2",
+    "status": "ok"
+  },
   "binary_sensor": {
     "files": [
       "automation.h",
@@ -95,6 +104,15 @@
     ],
     "ref": "2026.7.2",
     "source": "esphome/components/display_menu_base/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "es8311": {
+    "files": [
+      "es8311.h",
+      "es8311_const.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/es8311/ at ref 2026.7.2",
     "status": "ok"
   },
   "esp32": {
@@ -312,6 +330,27 @@
     "source": "esphome/components/media_player/ at ref 2026.7.2",
     "status": "ok"
   },
+  "micro_wake_word": {
+    "files": [
+      "automation.h",
+      "micro_wake_word.h",
+      "preprocessor_settings.h",
+      "streaming_model.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/micro_wake_word/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "microphone": {
+    "files": [
+      "automation.h",
+      "microphone.h",
+      "microphone_source.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/microphone/ at ref 2026.7.2",
+    "status": "ok"
+  },
   "mipi_spi": {
     "files": [
       "mipi_spi.h"
@@ -421,6 +460,14 @@
     ],
     "ref": "2026.7.2",
     "source": "esphome/components/power_supply/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "psram": {
+    "files": [
+      "psram.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/psram/ at ref 2026.7.2",
     "status": "ok"
   },
   "pulse_counter": {
@@ -654,6 +701,14 @@
     ],
     "ref": "2026.7.2",
     "source": "esphome/components/version/ at ref 2026.7.2",
+    "status": "ok"
+  },
+  "voice_assistant": {
+    "files": [
+      "voice_assistant.h"
+    ],
+    "ref": "2026.7.2",
+    "source": "esphome/components/voice_assistant/ at ref 2026.7.2",
     "status": "ok"
   },
   "wifi": {

@@ -1,0 +1,23 @@
+# DEPENDS ON: audio/microphone.yaml (mic_es8311), voice/assistant.yaml (voice_assistant.start action)
+# EXPOSES: micro_wake_word.mww (id, consumed by voice/assistant.yaml)
+
+# No AEC/beamforming coprocessor on this board (unlike Voice PE's XMOS chip),
+# so wake word may false-trigger or fail to detect while the speaker is
+# actively playing audio — there's no hardware echo cancellation. Gated by
+# stop_after_detection: true below, which halts mww for the full duration of
+# a voice_assistant pipeline run (including TTS playback); voice/assistant.yaml
+# re-arms it via micro_wake_word.start on client-connect/end/error.
+micro_wake_word:
+  id: mww
+  microphone:
+    microphone: mic_es8311
+    channels: [0]
+    gain_factor: 1
+  models:
+    - model: okay_nabu
+      id: model_okay_nabu
+  vad:
+  stop_after_detection: true
+  on_wake_word_detected:
+    - voice_assistant.start:
+        wake_word: !lambda 'return wake_word;'

@@ -1,0 +1,15 @@
+# DEPENDS ON: hardware/i2c.yaml (i2c_bus)
+# EXPOSES: audio_dac.es8311_dac (id, consumed by audio/speaker.yaml's audio_dac: key)
+
+# use_microphone: true — this board's mic runs through the ES8311's own ADC
+# input path (no separate mic ADC chip), so the DAC component must enable it.
+# mic_gain is left at the component default; uncalibrated for this hardware.
+audio_dac:
+  - platform: es8311
+    id: es8311_dac
+    i2c_id: i2c_bus
+    address: 0x18
+    sample_rate: 16000
+    bits_per_sample: 16bit
+    use_mclk: true
+    use_microphone: true

@@ -1,0 +1,5 @@
+# DEPENDS ON: (nothing)
+# EXPOSES: (nothing — platform configuration)
+
+logger:
+  level: DEBUG

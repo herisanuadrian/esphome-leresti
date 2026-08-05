@@ -1,0 +1,13 @@
+# DEPENDS ON: ${pin_i2s_lrck}, ${pin_i2s_bclk}, ${pin_i2s_mclk} (substitutions)
+# EXPOSES: i2s_audio.i2s_bus_audio (id, consumed by audio/microphone.yaml and audio/speaker.yaml)
+
+# Single shared I2S bus: mic (DIN) and speaker (DOUT) attach to this same hub
+# via i2s_audio_id, since the ES8311 wiring on this board shares one set of
+# BCLK/LRCK/MCLK lines for both directions (not two separate I2S ports).
+# Pin schema confirmed via `esphome config`: bare GPIO numbers are accepted
+# directly (no `number:` sub-key needed) — pin schema is not a TODO.
+i2s_audio:
+  - id: i2s_bus_audio
+    i2s_lrclk_pin: ${pin_i2s_lrck}
+    i2s_bclk_pin: ${pin_i2s_bclk}
+    i2s_mclk_pin: ${pin_i2s_mclk}

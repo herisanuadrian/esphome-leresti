@@ -1,0 +1,10 @@
+# DEPENDS ON: ${pin_i2c_sda}, ${pin_i2c_scl} (substitutions)
+# EXPOSES: i2c.i2c_bus (id, consumed by hardware/codec.yaml)
+
+i2c:
+  - id: i2c_bus
+    sda: ${pin_i2c_sda}
+    scl: ${pin_i2c_scl}
+    frequency: 400kHz
+    sda_pullup_enabled: true
+    scl_pullup_enabled: true
