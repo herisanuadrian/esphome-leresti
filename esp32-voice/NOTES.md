@@ -33,8 +33,12 @@ playback) — see `packages/voice/wake_word.yaml` and `packages/voice/NOTES.md`.
 - `audio/microphone.yaml` / `audio/speaker.yaml` — which side of the shared I2S bus
   should be `i2s_mode: secondary` vs `primary` (mic is currently secondary).
 
-None of these are caught by `./validate.sh` (schema-only) — they need a real
-`esphome compile` + flash to confirm. Run by the user, not by this agent.
+None of these are caught by `./validate.sh` (schema-only). User-run `esphome compile`
+succeeded (2026-08-05) — build is clean aside from one harmless upstream `-Wshadow`
+warning inside the `espressif__esp-tflite-micro` managed component (pulled in by
+`micro_wake_word` for ML inference kernels; not this repo's code, nothing to fix here).
+A successful compile does NOT confirm hardware behavior — the 4 items above still need
+a real flash + listen/speak test on the physical board.
 
 ## Cross-file id coupling
 
