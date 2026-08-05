@@ -47,10 +47,12 @@ a real flash + listen/speak test on the physical board.
 `micro_wake_word:` key and re-arms it via `micro_wake_word.start`/`.stop`). See
 `packages/voice/NOTES.md`.
 
-## Secrets
+## Literal (non-`!secret`) credentials — never touch the values
 
-New secrets added to `secrets.yaml` (gitignored, not committed): `api_encryption_key_esp32_voice`,
-`ota_password_esp32_voice`. WiFi reuses the existing shared secrets.
+`network/api.yaml`'s `encryption.key` and `network/ota.yaml`'s `password` are literal
+strings, hardcoded at the operator's explicit request (2026-08-05), matching the
+pre-existing `esp32-monitor` convention. WiFi reuses the existing shared `!secret`
+credentials.
 
 ## No MANUAL.md
 

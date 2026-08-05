@@ -1,6 +1,6 @@
-# DEPENDS ON: api_encryption_key_esp32_voice (secret)
+# DEPENDS ON: (nothing)
 # EXPOSES: (nothing named — device registers as an HA Assist voice satellite via api: + voice_assistant:)
 
 api:
   encryption:
-    key: !secret api_encryption_key_esp32_voice
+    key: "xK0XDzI4vnJlrLH0HFat/XlXP9iCqb85j+uARxA9zrs="
