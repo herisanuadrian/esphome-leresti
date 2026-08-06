@@ -24,6 +24,8 @@ wifi:
       password: !secret wifi_password_nou
     - ssid: !secret wifi_ssid_ext_nou
       password: !secret wifi_password_nou
+    - ssid: !secret wifi_ssid_d_link
+      password: !secret wifi_password_nou
 
 # Divizor extern (Tensiune 1, max. proiectat 60V) intre + si GPIO0:
 #   R1 = 560k ohm (spre +), R2 = 20k ohm (spre GND, punct median -> GPIO0)
