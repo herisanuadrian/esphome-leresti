@@ -1,0 +1,34 @@
+# DEPENDS ON: audio/media_player.yaml (external_media_player)
+# EXPOSES: script.play_sound (parameters: priority: bool, sound_file: string)
+
+audio_file:
+  - id: wake_word_triggered_sound
+    file: esp32-voice/sounds/wake_word_triggered.flac
+  - id: chime_processing
+    file: esp32-voice/sounds/chime_processing.wav
+
+script:
+  - id: play_sound
+    parameters:
+      priority: bool
+      sound_file: string
+    then:
+      - if:
+          condition:
+            lambda: return priority;
+          then:
+            - media_player.stop:
+                id: external_media_player
+                announcement: true
+      - lambda: |-
+          if ((id(external_media_player).state != media_player::MediaPlayerState::MEDIA_PLAYER_STATE_ANNOUNCING) || priority) {
+            audio::AudioFile *file = nullptr;
+            if (sound_file == "wake_word_triggered_sound") {
+              file = id(wake_word_triggered_sound);
+            } else if (sound_file == "chime_processing") {
+              file = id(chime_processing);
+            }
+            if (file != nullptr) {
+              id(external_media_player)->play_file(file, true, false);
+            }
+          }

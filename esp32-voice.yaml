@@ -105,5 +105,6 @@ packages:
   audio/microphone: !include esp32-voice/packages/audio/microphone.yaml
   audio/speaker: !include esp32-voice/packages/audio/speaker.yaml
   audio/media_player: !include esp32-voice/packages/audio/media_player.yaml
+  audio/sounds: !include esp32-voice/packages/audio/sounds.yaml
   voice/wake_word: !include esp32-voice/packages/voice/wake_word.yaml
   voice/assistant: !include esp32-voice/packages/voice/assistant.yaml

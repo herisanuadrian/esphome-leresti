@@ -7,5 +7,9 @@ micro_wake_word:
     - model: https://github.com/kahrendt/microWakeWord/releases/download/okay_nabu_20241226.3/okay_nabu.json
       id: okay_nabu
   on_wake_word_detected:
+    - script.execute:
+        id: play_sound
+        priority: true
+        sound_file: "wake_word_triggered_sound"
     - delay: 300ms
     - voice_assistant.start:

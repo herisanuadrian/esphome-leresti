@@ -10,6 +10,11 @@ voice_assistant:
   volume_multiplier: 4.0
   on_start:
     - logger.log: "VA started - listening"
+  on_intent_start:
+    - script.execute:
+        id: play_sound
+        priority: false
+        sound_file: "chime_processing"
   on_end:
     - delay: 1s
     - micro_wake_word.start:
