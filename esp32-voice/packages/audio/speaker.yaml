@@ -8,4 +8,4 @@ speaker:
     i2s_dout_pin: GPIO7    # MAX98357A DIN
     dac_type: external
     i2s_mode: primary
-    buffer_duration: 100ms
+    buffer_duration: 300ms
