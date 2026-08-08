@@ -87,6 +87,10 @@ sensor:
       - lambda: |-
           id(ultima_productie_solara_ms) = millis();
 
+  - platform: homeassistant
+    id: ha_putere_inverter
+    entity_id: sensor.gradina_consum_inverter_putere
+
 number:
   - platform: template
     id: prag_tensiune_baterie
@@ -135,6 +139,18 @@ number:
     optimistic: true
     restore_value: true
     initial_value: 300
+
+  - platform: template
+    id: prag_oprire_putere_inverter
+    name: "Prag Oprire Putere Inverter"
+    icon: "mdi:flash-alert"
+    min_value: 0
+    max_value: 3000
+    step: 100
+    unit_of_measurement: "W"
+    optimistic: true
+    restore_value: true
+    initial_value: 2500
 
 binary_sensor:
   - platform: gpio
@@ -241,9 +257,13 @@ interval:
     then:
       - lambda: |-
           const int pas_s = 5;
+          const float consum_boiler_w = 1900.0;
+          float prag_oprire_putere_w = id(prag_oprire_putere_inverter).state;
+          float prag_pornire_putere_w = prag_oprire_putere_w - 100.0;
           float tensiune = id(ha_tensiune_baterie).state;
           float luminozitate = id(ha_luminozitate).state;
           float productie_solara = id(ha_productie_solara).state;
+          float putere_inverter_w = id(ha_putere_inverter).state;
           float prag_tensiune = id(prag_tensiune_baterie).state;
           float prag_lum = id(prag_luminozitate).state;
           float prag_prod = id(prag_productie_solara).state;
@@ -253,10 +273,12 @@ interval:
           bool luminozitate_ok = !isnan(luminozitate) && luminozitate >= prag_lum;
           bool productie_solara_recenta = (millis() - id(ultima_productie_solara_ms)) < 60000;
           bool productie_solara_ok = !isnan(productie_solara) && productie_solara >= prag_prod; // && productie_solara_recenta; // dezactivat: valoare plafonata la 1V -> HA nu mai trimite update-uri
+          bool putere_valida = !isnan(putere_inverter_w);
 
-          ESP_LOGD("RELEU_STATIC", "tensiune=%.2f prag_tensiune=%.2f tensiune_recenta=%d tensiune_ok=%d luminozitate=%.2f prag_lum=%.2f luminozitate_ok=%d productie_solara=%.2f prag_prod=%.2f productie_solara_recenta=%d productie_solara_ok=%d contor_tensiune_s=%d contor_luminozitate_s=%d contor_productie_solara_s=%d boilerul_este_pornit=%d",
+          ESP_LOGD("RELEU_STATIC", "tensiune=%.2f prag_tensiune=%.2f tensiune_recenta=%d tensiune_ok=%d luminozitate=%.2f prag_lum=%.2f luminozitate_ok=%d productie_solara=%.2f prag_prod=%.2f productie_solara_recenta=%d productie_solara_ok=%d putere_inverter_w=%.1f putere_valida=%d contor_tensiune_s=%d contor_luminozitate_s=%d contor_productie_solara_s=%d boilerul_este_pornit=%d",
                    tensiune, prag_tensiune, tensiune_recenta, tensiune_ok, luminozitate, prag_lum, luminozitate_ok,
                    productie_solara, prag_prod, productie_solara_recenta, productie_solara_ok,
+                   putere_inverter_w, putere_valida,
                    id(contor_tensiune_s), id(contor_luminozitate_s), id(contor_productie_solara_s), id(boilerul_este_pornit));
 
           if (tensiune_ok) {
@@ -282,8 +304,15 @@ interval:
             return;
           }
 
+          if (putere_valida && putere_inverter_w > prag_oprire_putere_w && id(boilerul_este_pornit)) {
+            ESP_LOGD("RELEU_STATIC", "Consum inverter %.1fW > prag oprire %.1fW -> opresc boiler", putere_inverter_w, prag_oprire_putere_w);
+            id(opreste_boiler).execute();
+            return;
+          }
+
           if (id(contor_tensiune_s) >= id(prag_contor_tensiune_s).state && id(contor_luminozitate_s) >= 10 &&
               id(contor_productie_solara_s) >= 10 &&
+              (!putere_valida || (putere_inverter_w + consum_boiler_w) <= prag_pornire_putere_w) &&
               !id(boilerul_este_pornit) && id(comutator_general_boiler).state) {
             id(porneste_boiler).execute();
           }
