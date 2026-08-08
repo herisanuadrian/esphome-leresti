@@ -162,6 +162,36 @@ binary_sensor:
         pullup: false
     name: "Functionare Pompa Panou"
 
+  - platform: template
+    id: cond_tensiune_ok
+    name: "Cond. Pornire: Tensiune Baterie"
+    device_class: problem
+
+  - platform: template
+    id: cond_luminozitate_ok
+    name: "Cond. Pornire: Luminozitate"
+    device_class: problem
+
+  - platform: template
+    id: cond_productie_solara_ok
+    name: "Cond. Pornire: Productie Solara"
+    device_class: problem
+
+  - platform: template
+    id: cond_putere_ok
+    name: "Cond. Pornire: Putere Inverter"
+    device_class: problem
+
+  - platform: template
+    id: cond_boiler_oprit
+    name: "Cond. Pornire: Boiler Oprit"
+    device_class: problem
+
+  - platform: template
+    id: cond_comutator_general
+    name: "Cond. Pornire: Comutator General"
+    device_class: problem
+
 switch:
   - platform: gpio
     id: releu_acm
@@ -310,9 +340,20 @@ interval:
             return;
           }
 
-          if (id(contor_tensiune_s) >= id(prag_contor_tensiune_s).state && id(contor_luminozitate_s) >= 10 &&
-              id(contor_productie_solara_s) >= 10 &&
-              (!putere_valida || (putere_inverter_w + consum_boiler_w) <= prag_pornire_putere_w) &&
-              !id(boilerul_este_pornit) && id(comutator_general_boiler).state) {
+          bool ok_tensiune = id(contor_tensiune_s) >= id(prag_contor_tensiune_s).state;
+          bool ok_luminozitate = id(contor_luminozitate_s) >= 10;
+          bool ok_productie = id(contor_productie_solara_s) >= 10;
+          bool ok_putere = !putere_valida || (putere_inverter_w + consum_boiler_w) <= prag_pornire_putere_w;
+          bool ok_boiler_oprit = !id(boilerul_este_pornit);
+          bool ok_comutator = id(comutator_general_boiler).state;
+
+          id(cond_tensiune_ok).publish_state(ok_tensiune);
+          id(cond_luminozitate_ok).publish_state(ok_luminozitate);
+          id(cond_productie_solara_ok).publish_state(ok_productie);
+          id(cond_putere_ok).publish_state(ok_putere);
+          id(cond_boiler_oprit).publish_state(ok_boiler_oprit);
+          id(cond_comutator_general).publish_state(ok_comutator);
+
+          if (ok_tensiune && ok_luminozitate && ok_productie && ok_putere && ok_boiler_oprit && ok_comutator) {
             id(porneste_boiler).execute();
           }
